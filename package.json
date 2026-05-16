@@ -1,0 +1,16 @@
+{
+  "name": "training-bot",
+  "version": "1.0.0",
+  "description": "Telegram Mini App для тренировок с AI помощником",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {
+    "canvas": "^3.2.3"
+  },
+  "devDependencies": {
+    "vercel": "^34.0.0"
+  }
+}

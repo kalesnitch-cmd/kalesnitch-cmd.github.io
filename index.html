@@ -1,0 +1,1428 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#8b5cf6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Тренировки">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/icon-192.png">
+    <title>💪 Тренировочный Дневник</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;800;900&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
+            --primary-solid: #8b5cf6;
+            --primary-glow: rgba(139, 92, 246, 0.3);
+            --bg-primary: #030508;
+            --bg-secondary: #070c14;
+            --bg-tertiary: #04080f;
+            --card-bg: rgba(255, 255, 255, 0.02);
+            --card-bg-hover: rgba(255, 255, 255, 0.04);
+            --card-border: rgba(255, 255, 255, 0.055);
+            --card-border-hover: rgba(255, 255, 255, 0.08);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --text-primary: #f9fafb;
+            --text-secondary: #4b5563;
+            --text-tertiary: #374151;
+            --text-muted: #d1d5db;
+            --accent-yellow: #fbbf24;
+            --accent-blue: #60a5fa;
+            --accent-orange: #fb923c;
+            --accent-green: #4ade80;
+            --accent-red: #f87171;
+            --shadow-sm: 0 2px 10px var(--primary-glow);
+            --shadow-md: 0 4px 16px var(--primary-glow);
+            --shadow-lg: 0 48px 120px rgba(0, 0, 0, 0.95);
+            --radius-xs: 5px;
+            --radius-sm: 7px;
+            --radius-md: 9px;
+            --radius-lg: 12px;
+            --radius-xl: 17px;
+            --radius-xxl: 20px;
+            --radius-xxxl: 26px;
+        }
+
+        body.theme-orange {
+            --primary: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
+            --primary-solid: #f97316;
+            --primary-glow: rgba(249, 115, 22, 0.3);
+        }
+
+        body.theme-pink {
+            --primary: linear-gradient(135deg, #e879f9 0%, #c084fc 100%);
+            --primary-solid: #e879f9;
+            --primary-glow: rgba(232, 121, 249, 0.3);
+        }
+
+        body.theme-blue {
+            --primary: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+            --primary-solid: #60a5fa;
+            --primary-glow: rgba(96, 165, 250, 0.3);
+        }
+
+        body.theme-green {
+            --primary: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+            --primary-solid: #4ade80;
+            --primary-glow: rgba(74, 222, 128, 0.3);
+        }
+
+        body {
+            font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(170deg, #030508 0%, #070c14 55%, #04080f 100%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+            line-height: 1.5;
+            letter-spacing: -0.01em;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse 55% 30% at 8% 0%, rgba(139, 92, 246, 0.09) 0%, transparent 55%);
+            pointer-events: none;
+            z-index: 0;
+            transition: background 0.4s;
+        }
+
+        body.theme-orange::before {
+            background: radial-gradient(ellipse 55% 30% at 8% 0%, rgba(249, 115, 22, 0.09) 0%, transparent 55%);
+        }
+
+        body.theme-pink::before {
+            background: radial-gradient(ellipse 55% 30% at 8% 0%, rgba(232, 121, 249, 0.09) 0%, transparent 55%);
+        }
+
+        body.theme-blue::before {
+            background: radial-gradient(ellipse 55% 30% at 8% 0%, rgba(96, 165, 250, 0.09) 0%, transparent 55%);
+        }
+
+        body.theme-green::before {
+            background: radial-gradient(ellipse 55% 30% at 8% 0%, rgba(74, 222, 128, 0.09) 0%, transparent 55%);
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        h1, h2, h3, .font-display {
+            font-family: 'Unbounded', 'Manrope', sans-serif;
+            font-weight: 800;
+        }
+
+        /* Градиентный фон */
+        .gradient-bg {
+            background: var(--primary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gradient-bg::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.1); opacity: 0.5; }
+        }
+
+        /* Современные кнопки */
+        .btn-modern {
+            background: linear-gradient(135deg, var(--primary-solid), var(--primary-solid)cc);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 20px;
+            font-weight: 800;
+            font-size: 13px;
+            color: #030508;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.15s;
+            box-shadow: var(--shadow-sm);
+            letter-spacing: -0.01em;
+            font-family: 'Manrope', sans-serif;
+        }
+
+        .btn-modern:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-1px);
+        }
+
+        .btn-modern:active {
+            transform: scale(0.98);
+        }
+
+        /* Карточки */
+        .card-modern {
+            background: var(--card-bg);
+            border-radius: var(--radius-xl);
+            padding: 18px;
+            position: relative;
+            transition: all 0.15s;
+            border: 1px solid var(--card-border);
+        }
+
+        .card-modern:hover {
+            background: var(--card-bg-hover);
+            border-color: var(--card-border-hover);
+        }
+
+        /* Меню карточки */
+        .menu-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-xxl);
+            padding: 24px 20px;
+            cursor: pointer;
+            transition: all 0.15s;
+            border: 1px solid var(--card-border);
+            position: relative;
+            overflow: hidden;
+            color: var(--text-primary);
+        }
+
+        .menu-card:hover {
+            background: var(--card-bg-hover);
+            border-color: var(--card-border-hover);
+            transform: translateY(-2px);
+        }
+
+        .menu-card:active {
+            transform: scale(0.98);
+        }
+
+        /* Инпуты */
+        .input-modern {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1.5px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            padding: 12px 14px;
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.2s;
+            outline: none;
+            font-weight: 500;
+            font-family: 'Manrope', sans-serif;
+        }
+
+        .input-modern:focus {
+            border-color: var(--primary-solid);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 3px var(--primary-glow);
+        }
+
+        /* Селектор темы */
+        .theme-selector {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            padding: 16px;
+            background: var(--card-bg);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--card-border);
+        }
+
+        .theme-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 1.5px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: none;
+        }
+
+        .theme-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .theme-btn.active {
+            border-color: white;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        .theme-purple { background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%); }
+        .theme-orange-btn { background: linear-gradient(135deg, #f97316 0%, #fb923c 100%); }
+        .theme-pink-btn { background: linear-gradient(135deg, #e879f9 0%, #c084fc 100%); }
+        .theme-blue-btn { background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%); }
+        .theme-green-btn { background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%); }
+
+        /* Кнопки дней */
+        .day-btn {
+            background: var(--card-bg);
+            border: none;
+            border-radius: 11px;
+            padding: 12px 10px;
+            transition: all 0.15s;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--text-primary);
+            font-family: 'Manrope', sans-serif;
+            font-size: 13px;
+        }
+
+        .day-btn:hover {
+            background: var(--card-bg-hover);
+            color: var(--text-primary);
+            transform: translateY(-1px);
+        }
+
+        .day-btn.active {
+            background: linear-gradient(145deg, var(--primary-solid), var(--primary-solid)aa);
+            border: none;
+            box-shadow: var(--shadow-md);
+            color: #ffffff;
+            font-weight: 800;
+        }
+
+        .day-btn:active {
+            transform: scale(0.97);
+        }
+
+        /* Details/Summary стилизация */
+        details {
+            transition: all 0.3s;
+        }
+
+        details summary {
+            list-style: none;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        details summary::-webkit-details-marker {
+            display: none;
+        }
+
+        details[open] summary .arrow {
+            transform: rotate(180deg);
+        }
+
+        .arrow {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Модальное окно */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.92);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.2s;
+            padding: 16px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: linear-gradient(160deg, #0b1520 0%, #060e18 100%);
+            border-radius: var(--radius-xxxl);
+            padding: 20px 22px;
+            max-width: 95%;
+            max-height: 88vh;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            box-shadow: var(--shadow-lg);
+            animation: slideUp 0.2s;
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.05) transparent;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* YouTube ссылка */
+        .youtube-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            background: rgba(255, 0, 0, 0.1);
+            border: 1.5px solid rgba(255, 0, 0, 0.25);
+            border-radius: var(--radius-sm);
+            color: #ff5555;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 600;
+            transition: all 0.2s;
+            font-family: 'Manrope', sans-serif;
+        }
+
+        .youtube-link:hover {
+            background: rgba(255, 0, 0, 0.15);
+            border-color: rgba(255, 0, 0, 0.4);
+            transform: translateY(-1px);
+        }
+
+        /* Карточки упражнений */
+        .exercise-item {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-xl);
+            padding: 13px 14px;
+            margin-bottom: 8px;
+            transition: all 0.15s;
+        }
+
+        .exercise-item:hover {
+            background: var(--card-bg-hover);
+            border-color: var(--card-border-hover);
+        }
+
+        .exercise-name {
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 1.4;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            letter-spacing: -0.01em;
+            font-family: 'Manrope', sans-serif;
+        }
+
+        .exercise-details {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 6px;
+            font-weight: 500;
+            font-family: 'Manrope', sans-serif;
+        }
+
+        /* Инпуты для подходов */
+        .set-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1.5px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            padding: 10px 12px;
+            color: var(--text-primary);
+            font-size: 13px;
+            width: 100%;
+            transition: all 0.2s;
+            font-weight: 500;
+            font-family: 'Manrope', sans-serif;
+        }
+
+        .set-input:focus {
+            outline: none;
+            border-color: var(--primary-solid);
+            box-shadow: 0 0 0 3px var(--primary-glow);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        /* Кнопка "Назад к выбору программы" */
+        .back-button {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 12px 20px;
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.15s;
+            width: 100%;
+            text-align: center;
+            font-family: 'Manrope', sans-serif;
+        }
+
+        .back-button:hover {
+            background: var(--card-bg-hover);
+            border-color: var(--card-border-hover);
+            transform: translateY(-1px);
+        }
+
+        .back-button:active {
+            transform: scale(0.98);
+        }
+
+        /* Скрытие спиннеров */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn 0.2s;
+        }
+
+        /* Прогресс бар */
+        .progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 4px;
+        }
+
+        /* Дополнительные утилиты */
+        .space-y-3 > * + * {
+            margin-top: 16px;
+        }
+
+        .space-y-4 > * + * {
+            margin-top: 20px;
+        }
+
+        .space-y-6 > * + * {
+            margin-top: 28px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Скроллбар */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Кнопки программ с градиентами */
+        .program-card {
+            background: linear-gradient(135deg, var(--primary-solid), var(--primary-solid)cc);
+            border: none;
+            border-radius: var(--radius-xxl);
+            padding: 16px 18px;
+            cursor: pointer;
+            transition: all 0.15s;
+            box-shadow: var(--shadow-sm);
+            color: #ffffff;
+        }
+
+        .program-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .program-card:active {
+            transform: scale(0.98);
+        }
+
+        .program-card .text-white {
+            color: #ffffff !important;
+        }
+
+        /* Кнопки с иконками */
+        .icon-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: var(--radius-md);
+            transition: all 0.15s;
+            color: var(--text-tertiary);
+        }
+
+        .icon-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+
+        .icon-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Чипы и бейджи */
+        .chip {
+            font-size: 9px;
+            font-weight: 700;
+            color: var(--chip-color, var(--primary-solid));
+            background: var(--chip-bg, rgba(139, 92, 246, 0.1));
+            border: 1px solid var(--chip-border, rgba(139, 92, 246, 0.25));
+            border-radius: var(--radius-xs);
+            padding: 2px 8px;
+            font-family: 'Manrope', sans-serif;
+            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Иконки и эмодзи контейнеры */
+        .icon-container {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            flex-shrink: 0;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .icon-container-lg {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            font-size: 22px;
+        }
+
+        /* Секции с заголовками */
+        .section-label {
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-family: 'Manrope', sans-serif;
+            margin-bottom: 9px;
+        }
+
+        /* Карточка упражнения в стиле pitanie */
+        .meal-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            transition: all 0.15s;
+        }
+
+        .meal-card:hover {
+            background: var(--card-bg-hover);
+            border-color: var(--card-border-hover);
+        }
+
+        .meal-card-header {
+            display: flex;
+            align-items: center;
+            padding: 13px 14px;
+            gap: 10px;
+        }
+
+        .meal-card-footer {
+            display: flex;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .meal-card-stat {
+            flex: 1;
+            text-align: center;
+            padding: 6px 0;
+            border-right: 1px solid rgba(255, 255, 255, 0.04);
+            font-size: 11px;
+            font-family: 'Manrope', sans-serif;
+        }
+
+        .meal-card-stat:last-child {
+            border-right: none;
+        }
+
+        /* Итоговые блоки */
+        .summary-card {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(139, 92, 246, 0.05));
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: var(--radius-xxl);
+            padding: 16px 18px;
+        }
+
+        .summary-metric {
+            font-size: 28px;
+            font-weight: 900;
+            line-height: 1;
+            font-family: 'Unbounded', sans-serif;
+            color: var(--accent-green);
+        }
+
+        .summary-label {
+            font-size: 9px;
+            color: var(--text-tertiary);
+            letter-spacing: 1.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-family: 'Manrope', sans-serif;
+            margin-bottom: 4px;
+        }
+
+        /* Прогресс-бары для макронутриентов */
+        .macro-progress-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .macro-progress {
+            flex: 1;
+        }
+
+        .macro-progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 3px;
+            font-size: 9px;
+            color: var(--text-tertiary);
+            font-family: 'Manrope', sans-serif;
+            font-weight: 700;
+        }
+
+        .macro-progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .macro-progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.4s;
+        }
+
+        .macro-progress-fill.protein { background: var(--accent-blue); }
+        .macro-progress-fill.fat { background: var(--accent-orange); }
+        .macro-progress-fill.carbs { background: var(--accent-green); }
+
+        /* Sticky header улучшенный */
+        .header-sticky {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            background: rgba(3, 5, 8, 0.96);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .header-content {
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 0 18px;
+        }
+
+        .header-top {
+            padding-top: 14px;
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .header-tabs {
+            display: flex;
+            gap: 2px;
+        }
+
+        .header-tab {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px 14px 13px;
+            color: var(--text-tertiary);
+            font-weight: 500;
+            font-size: 12px;
+            font-family: 'Manrope', sans-serif;
+            border-bottom: 2px solid transparent;
+            transition: all 0.15s;
+        }
+
+        .header-tab.active {
+            color: var(--primary-solid);
+            font-weight: 700;
+            border-bottom-color: var(--primary-solid);
+        }
+
+        /* Кнопки переключения (Toggle) */
+        .btn-toggle {
+            border: 1.5px solid var(--card-border);
+            background: var(--card-bg);
+            color: var(--text-primary);
+            border-radius: 12px;
+            padding: 8px 18px;
+            font-weight: 800;
+            font-size: 13px;
+            font-family: 'Manrope', sans-serif;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .btn-toggle.active {
+            border-color: var(--primary-solid);
+            background: rgba(139, 92, 246, 0.16);
+            color: var(--primary-solid);
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        .btn-toggle:hover {
+            transform: translateY(-1px);
+        }
+
+        /* Информационные блоки */
+        .info-box {
+            background: rgba(96, 165, 250, 0.04);
+            border: 1px solid rgba(96, 165, 250, 0.1);
+            border-radius: var(--radius-lg);
+            padding: 11px 14px;
+            display: flex;
+            gap: 7px;
+            margin-top: 14px;
+        }
+
+        .info-box-icon {
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .info-box-text {
+            font-size: 11px;
+            color: var(--text-secondary);
+            line-height: 1.55;
+            font-family: 'Manrope', sans-serif;
+        }
+
+        .info-box-text strong {
+            color: var(--accent-blue);
+        }
+
+        /* Плавающая кнопка */
+        .fab {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-solid), var(--primary-solid)cc);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.15s;
+            z-index: 100;
+            color: #030508;
+            font-weight: 800;
+        }
+
+        .fab:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .fab:active {
+            transform: scale(0.95);
+        }
+
+        /* Плавающая кнопка "Назад" */
+        .fab-back {
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.15s;
+            z-index: 100;
+            color: var(--text-primary);
+        }
+
+        .fab-back.active {
+            display: flex;
+        }
+
+        .fab-back:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .fab-back:active {
+            transform: scale(0.95);
+        }
+
+        /* Кнопка "Готово" для клавиатуры */
+        .keyboard-done-btn {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--primary);
+            color: white;
+            padding: 16px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 17px;
+            z-index: 9999;
+            display: none;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
+            cursor: pointer;
+            user-select: none;
+            letter-spacing: -0.01em;
+        }
+
+        .keyboard-done-btn.active {
+            display: block;
+            animation: slideUpBtn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes slideUpBtn {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Кнопка "Готово" для закрытия клавиатуры -->
+    <div class="keyboard-done-btn" id="keyboardDoneBtn" onclick="hideKeyboardWithButton()">
+        ✓ Готово
+    </div>
+
+    <!-- Плавающая кнопка "Назад" -->
+    <div class="fab-back" id="fabBack" onclick="switchPage('mainMenu')">
+        ←
+    </div>
+
+    <div class="container mx-auto">
+
+        <!-- Главное меню -->
+        <div id="mainMenu" class="page active">
+            <div class="min-h-screen flex flex-col">
+                <div class="gradient-bg text-white p-8 text-center relative z-10">
+                    <h1 class="text-4xl font-bold mb-2 font-display">💪</h1>
+                    <h2 class="text-2xl font-bold tracking-tight font-display">Тренировочный Дневник</h2>
+                    <p class="text-sm opacity-90 mt-2 font-medium" id="currentDate"></p>
+                </div>
+
+                <div class="flex-1 p-5 flex flex-col justify-center space-y-3">
+                    <div class="grid grid-cols-2 gap-3">
+                        <div onclick="switchPage('workout')" class="menu-card">
+                            <div class="text-4xl mb-2 text-center">🏋️</div>
+                            <div class="text-base font-bold text-center font-display">Тренировка</div>
+                        </div>
+
+                        <div onclick="switchPage('history')" class="menu-card">
+                            <div class="text-4xl mb-2 text-center">📅</div>
+                            <div class="text-base font-bold text-center font-display">История</div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div onclick="switchPage('aiTrainer')" class="menu-card">
+                            <div class="text-4xl mb-2 text-center">🤖</div>
+                            <div class="text-base font-bold text-center font-display">AI Тренер</div>
+                        </div>
+
+                        <div onclick="switchPage('progress')" class="menu-card">
+                            <div class="text-4xl mb-2 text-center">📈</div>
+                            <div class="text-base font-bold text-center font-display">Прогресс</div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div onclick="switchPage('myPlan')" class="menu-card">
+                            <div class="text-4xl mb-2 text-center">📝</div>
+                            <div class="text-base font-bold text-center font-display">Мой план</div>
+                        </div>
+
+                        <div onclick="switchPage('exercises')" class="menu-card">
+                            <div class="text-4xl mb-2 text-center">📚</div>
+                            <div class="text-base font-bold text-center font-display">Гайды</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-5 pb-6">
+                    <p class="text-center text-xs opacity-60 mb-3 font-medium">Выберите тему</p>
+                    <div class="theme-selector">
+                        <button class="theme-btn theme-purple active" onclick="changeTheme('purple')"></button>
+                        <button class="theme-btn theme-orange-btn" onclick="changeTheme('orange')"></button>
+                        <button class="theme-btn theme-pink-btn" onclick="changeTheme('pink')"></button>
+                        <button class="theme-btn theme-blue-btn" onclick="changeTheme('blue')"></button>
+                        <button class="theme-btn theme-green-btn" onclick="changeTheme('green')"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Страница тренировки -->
+        <div id="workoutPage" class="page">
+            <div class="header-sticky">
+                <div class="header-content">
+                    <div class="header-top">
+                        <button onclick="switchPage('mainMenu')" class="text-xl z-10">←</button>
+                        <h1 class="text-lg font-bold flex-1 text-center z-10 font-display">Тренировка</h1>
+                        <div class="w-8"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4" id="workoutProgramSelection">
+                <div class="card-modern mb-3">
+                    <h3 class="text-base font-bold mb-3 text-center font-display" style="background: var(--primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Выбери программу тренировок</h3>
+                    <p class="text-xs opacity-70 text-center mb-3">Стандартные программы или создай свою с AI</p>
+
+                    <div class="space-y-3">
+                        <button onclick="selectWorkoutProgram('fullbody')" class="program-card w-full text-left flex items-center justify-between text-white">
+                            <div class="flex items-center gap-3">
+                                <div class="text-3xl">💪</div>
+                                <div>
+                                    <div class="text-base font-bold font-display">Full Body</div>
+                                    <div class="text-xs opacity-90 mt-1">Программа на всё тело</div>
+                                    <div class="text-xs opacity-75 mt-1">3 дня в неделю • Жим лёжа</div>
+                                </div>
+                            </div>
+                            <div class="text-xl opacity-75">→</div>
+                        </button>
+
+                        <button onclick="selectWorkoutProgram('glutes')" class="program-card w-full text-left flex items-center justify-between text-white">
+                            <div class="flex items-center gap-3">
+                                <div class="text-3xl">🍑</div>
+                                <div>
+                                    <div class="text-base font-bold font-display">Ягодицы</div>
+                                    <div class="text-xs opacity-90 mt-1">Программа на ноги и ягодицы</div>
+                                    <div class="text-xs opacity-75 mt-1">3 дня в неделю • Нижняя часть</div>
+                                </div>
+                            </div>
+                            <div class="text-xl opacity-75">→</div>
+                        </button>
+
+                        <div id="aiProgramsList"></div>
+                    </div>
+                </div>
+
+                <div class="card-modern" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(236, 72, 153, 0.1) 100%); border: 2px dashed var(--card-border); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);">
+                    <div class="text-center p-3">
+                        <div class="text-2xl mb-2">🤖</div>
+                        <div class="font-bold mb-2 text-sm font-display">Нет подходящей программы?</div>
+                        <div class="text-xs opacity-70 mb-3">Создай персональный план с AI Тренером</div>
+                        <button onclick="switchPage('aiTrainer')" class="btn-modern">
+                            ✨ Создать AI план
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4 hidden" id="workoutDaySelection">
+                <button onclick="backToProgramSelection()" class="back-button mb-3">
+                    ← Назад к выбору программы
+                </button>
+
+                <div class="card-modern mb-3" style="background: var(--card-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);">
+                    <div class="flex items-center justify-between mb-2">
+                        <div>
+                            <div class="text-xs opacity-60 mb-1">Текущая программа</div>
+                            <div class="text-base font-bold font-display" id="currentProgramName">💪 Full Body</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-modern mb-3">
+                    <p class="text-xs opacity-70 mb-3 text-center">Выбери день тренировки</p>
+                    <div class="grid grid-cols-3 gap-3">
+                        <button onclick="selectDay('A')" class="day-btn text-center font-semibold" data-day="A">
+                            <div class="text-sm">День А</div>
+                            <div class="text-xs opacity-70 mt-1">Тяжёлый</div>
+                        </button>
+                        <button onclick="selectDay('B')" class="day-btn text-center font-semibold" data-day="B">
+                            <div class="text-sm">День Б</div>
+                            <div class="text-xs opacity-70 mt-1">Объёмный</div>
+                        </button>
+                        <button onclick="selectDay('C')" class="day-btn text-center font-semibold" data-day="C">
+                            <div class="text-sm">День В</div>
+                            <div class="text-xs opacity-70 mt-1">Лёгкий</div>
+                        </button>
+                    </div>
+                </div>
+
+                <button onclick="showAddExerciseFromGuideModal()" class="btn-modern w-full mb-3">
+                    ➕ Добавить упражнение из справочника
+                </button>
+
+                <div id="exercisesList" class="mb-20"></div>
+
+                <button onclick="completeWorkout()" class="btn-modern w-full text-base">
+                    ✅ Завершить тренировку
+                </button>
+            </div>
+
+            <div class="fab" onclick="showAddCustomExerciseModal()">+</div>
+        </div>
+
+        <!-- Страница истории -->
+        <div id="historyPage" class="page">
+            <div class="header-sticky">
+                <div class="header-content">
+                    <div class="header-top">
+                        <button onclick="switchPage('mainMenu')" class="text-xl z-10">←</button>
+                        <h1 class="text-lg font-bold flex-1 text-center z-10 font-display">История</h1>
+                        <div class="w-8"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4" id="historyContent"></div>
+        </div>
+
+        <!-- Страница прогресса -->
+        <div id="progressPage" class="page">
+            <div class="header-sticky">
+                <div class="header-content">
+                    <div class="header-top">
+                        <button onclick="switchPage('mainMenu')" class="text-xl z-10">←</button>
+                        <h1 class="text-lg font-bold flex-1 text-center z-10 font-display">Прогресс</h1>
+                        <div class="w-8"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4">
+                <div class="grid grid-cols-2 gap-3 mb-5">
+                    <div class="card-modern text-center">
+                        <div class="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent font-display" id="totalWorkouts">0</div>
+                        <div class="text-xs opacity-70 mt-2">Всего тренировок</div>
+                    </div>
+                    <div class="card-modern text-center">
+                        <div class="text-3xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent font-display" id="currentStreak">0</div>
+                        <div class="text-xs opacity-70 mt-2">Дней подряд</div>
+                    </div>
+                </div>
+
+                <div class="card-modern mb-3">
+                    <p class="text-xs opacity-70 mb-3 text-center">Выбери программу</p>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="switchProgressProgram('fullbody')" class="program-btn day-btn text-center font-semibold" id="progressFullbodyBtn">
+                            <div class="text-sm">💪 Full Body</div>
+                            <div class="text-xs opacity-70 mt-1">Жим лёжа</div>
+                        </button>
+                        <button onclick="switchProgressProgram('glutes')" class="program-btn day-btn text-center font-semibold" id="progressGlutesBtn">
+                            <div class="text-sm">🍑 Ягодицы</div>
+                            <div class="text-xs opacity-70 mt-1">Ноги и ягодицы</div>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card-modern mb-4" id="progressExercisesList"></div>
+            </div>
+        </div>
+
+        <!-- Страница гайдов -->
+        <div id="exercisesPage" class="page">
+            <div class="header-sticky">
+                <div class="header-content">
+                    <div class="header-top">
+                        <button onclick="switchPage('mainMenu')" class="text-xl z-10">←</button>
+                        <h1 class="text-lg font-bold flex-1 text-center z-10 font-display">Гайды</h1>
+                        <div class="w-8"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4" id="exercisesGuide"></div>
+        </div>
+
+        <!-- Страница AI Тренера -->
+        <div id="aiTrainerPage" class="page">
+            <div class="header-sticky">
+                <div class="header-content">
+                    <div class="header-top">
+                        <button onclick="switchPage('mainMenu')" class="text-xl z-10">←</button>
+                        <h1 class="text-lg font-bold flex-1 text-center z-10 font-display">🤖 AI Тренер</h1>
+                        <div class="w-8"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4">
+                <div class="card-modern mb-3">
+                    <h3 class="text-base font-bold mb-3 font-display" style="background: var(--primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Расскажи о себе</h3>
+                    <p class="text-xs opacity-70 mb-3">AI составит персональный план тренировок на основе твоих данных</p>
+
+                    <div class="space-y-3">
+                        <div>
+                            <label class="text-xs opacity-80 block mb-1">Пол</label>
+                            <select id="aiGender" class="input-modern w-full">
+                                <option value="Мужской">Мужской</option>
+                                <option value="Женский">Женский</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="text-xs opacity-80 block mb-1">Возраст (лет)</label>
+                            <input type="number" id="aiAge" placeholder="28" class="input-modern w-full">
+                        </div>
+
+                        <div>
+                            <label class="text-xs opacity-80 block mb-1">Вес (кг)</label>
+                            <input type="number" id="aiWeight" placeholder="70" class="input-modern w-full">
+                        </div>
+
+                        <div>
+                            <label class="text-xs opacity-80 block mb-1">Рост (см)</label>
+                            <input type="number" id="aiHeight" placeholder="173" class="input-modern w-full">
+                        </div>
+
+                        <div>
+                            <label class="text-xs opacity-80 block mb-1">Опыт тренировок</label>
+                            <select id="aiExperience" class="input-modern w-full">
+                                <option value="Новичок (0-6 месяцев)">Новичок (0-6 месяцев)</option>
+                                <option value="Начальный (6-12 месяцев)">Начальный (6-12 месяцев)</option>
+                                <option value="Средний (1-3 года)">Средний (1-3 года)</option>
+                                <option value="Продвинутый (3+ года)">Продвинутый (3+ года)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="text-xs opacity-80 block mb-1">Цель тренировок</label>
+                            <select id="aiGoal" class="input-modern w-full">
+                                <option value="Набор мышечной массы">Набор мышечной массы</option>
+                                <option value="Похудение и рельеф">Похудение и рельеф</option>
+                                <option value="Увеличение силы">Увеличение силы</option>
+                                <option value="Общая физическая форма">Общая физическая форма</option>
+                                <option value="Развитие ягодиц и ног">Развитие ягодиц и ног</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="text-xs opacity-80 block mb-1">Что хочешь прорабатывать больше?</label>
+                            <select id="aiFocusAreas" class="input-modern w-full" multiple size="4">
+                                <option value="Ноги и ягодицы">🍑 Ноги и ягодицы</option>
+                                <option value="Грудь и руки">💪 Грудь и руки</option>
+                                <option value="Спина и плечи">🦾 Спина и плечи</option>
+                                <option value="Пресс и кор">🔥 Пресс и кор</option>
+                            </select>
+                            <p class="text-xs opacity-60 mt-1">Можно выбрать несколько (удерживай Ctrl/Cmd)</p>
+                        </div>
+
+                        <div>
+                            <label class="text-xs opacity-80 block mb-1">Доступное оборудование</label>
+                            <select id="aiEquipment" class="input-modern w-full">
+                                <option value="Полный зал (штанги, гантели, тренажеры)">Полный зал</option>
+                                <option value="Базовое (штанга, гантели, скамья)">Базовое оборудование</option>
+                                <option value="Только гантели">Только гантели</option>
+                                <option value="Без оборудования (дома)">Без оборудования</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="text-xs opacity-80 block mb-1">Предпочитаемые упражнения (необязательно)</label>
+                            <textarea id="aiPreferredExercises" placeholder="Например: приседания, жим лёжа, становая тяга, подтягивания..." class="input-modern w-full" rows="3"></textarea>
+                            <p class="text-xs opacity-60 mt-1">Укажи упражнения, которые тебе нравятся или которые ты хочешь включить в план</p>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="generateAIPlan()" id="generateBtn" class="btn-modern w-full text-base mb-3">
+                    ✨ Составить план
+                </button>
+
+                <p class="text-xs opacity-60 text-center mb-3">💡 Не понравился план? Нажми "Составить план" ещё раз - каждый раз будет новый вариант!</p>
+
+                <div id="aiPlanResult" class="hidden">
+                    <div class="card-modern">
+                        <h3 class="text-base font-bold mb-3 font-display" style="background: var(--primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Твой персональный план</h3>
+                        <div id="aiPlanContent" class="text-xs opacity-90 whitespace-pre-wrap"></div>
+                        <button onclick="saveAIPlanToWorkouts()" class="btn-modern w-full text-base mt-3">
+                            💾 Добавить в Тренировки
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Страница "Мой план" -->
+        <div id="myPlanPage" class="page">
+            <div class="header-sticky">
+                <div class="header-content">
+                    <div class="header-top">
+                        <button onclick="switchPage('mainMenu')" class="text-xl z-10">←</button>
+                        <h1 class="text-lg font-bold flex-1 text-center z-10 font-display">📝 Мой план</h1>
+                        <div class="w-8"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4">
+                <div class="card-modern mb-3">
+                    <p class="text-xs opacity-70 mb-3 text-center">Выбери программу для редактирования</p>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="switchProgramForEdit('fullbody')" class="program-btn day-btn text-center font-semibold" id="editFullbodyBtn">
+                            <div class="text-sm">💪 Full Body</div>
+                            <div class="text-xs opacity-70 mt-1">Жим лёжа</div>
+                        </button>
+                        <button onclick="switchProgramForEdit('glutes')" class="program-btn day-btn text-center font-semibold" id="editGlutesBtn">
+                            <div class="text-sm">🍑 Ягодицы</div>
+                            <div class="text-xs opacity-70 mt-1">Ноги и ягодицы</div>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <button onclick="resetToDefaultProgram()" class="w-full py-3 rounded-xl font-semibold text-sm" style="background: rgba(255,0,0,0.1); border: 1px solid rgba(255,0,0,0.3); color: #ff6b6b;">
+                        🔄 Сбросить к стандартному плану
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-3 gap-3 mb-3">
+                    <button onclick="selectDayForEdit('A')" class="day-btn text-center font-semibold" data-edit-day="A">
+                        <div class="text-sm">День А</div>
+                    </button>
+                    <button onclick="selectDayForEdit('B')" class="day-btn text-center font-semibold" data-edit-day="B">
+                        <div class="text-sm">День Б</div>
+                    </button>
+                    <button onclick="selectDayForEdit('C')" class="day-btn text-center font-semibold" data-edit-day="C">
+                        <div class="text-sm">День В</div>
+                    </button>
+                </div>
+
+                <div id="editExercisesList"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Модальное окно добавления упражнения из справочника -->
+    <div id="addExerciseFromGuideModal" class="modal">
+        <div class="modal-content" style="max-width: 95%; max-height: 88vh; overflow-y: auto;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                <h3 class="text-base font-bold font-display">Добавить упражнение</h3>
+                <button onclick="closeAddExerciseFromGuideModal()" class="icon-btn text-xl">✕</button>
+            </div>
+
+            <div id="exercisesList" class="space-y-2 mb-3" style="max-height: 500px; overflow-y: auto;">
+                <!-- Список упражнений будет здесь -->
+            </div>
+
+            <button onclick="closeAddExerciseFromGuideModal()" class="w-full py-3 rounded-xl font-semibold text-sm" style="background: rgba(255,255,255,0.05)">Отмена</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно редактирования упражнения -->
+    <div id="editExerciseModal" class="modal">
+        <div class="modal-content">
+            <h3 class="text-base font-bold mb-3 font-display">Редактировать упражнение</h3>
+
+            <div class="mb-3">
+                <label class="text-xs opacity-80 block mb-2">Название</label>
+                <input type="text" id="editExerciseName" class="input-modern w-full">
+            </div>
+
+            <div class="mb-3">
+                <label class="text-xs opacity-80 block mb-2">Количество подходов</label>
+                <input type="number" id="editExerciseSets" min="1" max="10" class="input-modern w-full">
+            </div>
+
+            <div class="mb-3">
+                <label class="text-xs opacity-80 block mb-2">Количество повторений</label>
+                <input type="text" id="editExerciseReps" placeholder="8-10 или 12" class="input-modern w-full">
+            </div>
+
+            <button onclick="saveExerciseEdit()" class="btn-modern w-full mb-2">Сохранить</button>
+            <button onclick="closeEditExerciseModal()" class="w-full py-3 rounded-xl font-semibold text-sm" style="background: rgba(255,255,255,0.05)">Отмена</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно создания своего упражнения -->
+    <div id="addCustomExerciseModal" class="modal">
+        <div class="modal-content">
+            <h3 class="text-base font-bold mb-3 font-display">Создать своё упражнение</h3>
+
+            <div class="mb-3">
+                <label class="text-xs opacity-80 block mb-2">Название упражнения</label>
+                <input type="text" id="customExerciseName" placeholder="Название упражнения" class="input-modern w-full">
+            </div>
+
+            <div class="mb-3">
+                <label class="text-xs opacity-80 block mb-2">Количество подходов (по умолчанию 4)</label>
+                <input type="number" id="customExerciseSets" placeholder="4" min="1" max="10" class="input-modern w-full">
+            </div>
+
+            <div class="mb-3">
+                <label class="text-xs opacity-80 block mb-2">Количество повторений (по умолчанию 12)</label>
+                <input type="text" id="customExerciseReps" placeholder="12" class="input-modern w-full">
+            </div>
+
+            <button onclick="addCustomExercise()" class="btn-modern w-full mb-2">Добавить</button>
+            <button onclick="closeAddCustomExerciseModal()" class="w-full py-3 rounded-xl font-semibold text-sm" style="background: rgba(255,255,255,0.05)">Отмена</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно редактирования истории -->
+    <div id="editHistoryModal" class="modal">
+        <div class="modal-content" style="max-width: 95%; max-height: 88vh; overflow-y: auto;">
+            <h3 class="text-base font-bold mb-3 font-display">Редактировать тренировку</h3>
+            <input type="hidden" id="editHistoryIndex">
+            <div id="editHistoryExercises" class="mb-3"></div>
+            <button onclick="saveHistoryEdit()" class="btn-modern w-full mb-2">Сохранить изменения</button>
+            <button onclick="closeEditHistoryModal()" class="w-full py-3 rounded-xl font-semibold text-sm" style="background: rgba(255,255,255,0.05)">Отмена</button>
+        </div>
+    </div>
+
+    <script src="data.js?v=15"></script>
+    <script src="app.js?v=15"></script>
+</body>
+</html>
