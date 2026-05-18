@@ -91,10 +91,11 @@ function setupAutosaveHandlers() {
 
 // Загрузка программы из localStorage
 function loadProgram() {
-    const savedProgram = localStorage.getItem('currentProgram');
-    if (savedProgram) {
-        currentProgram = savedProgram;
-    }
+const savedProgram = localStorage.getItem('selectedWorkoutProgram');
+
+if (savedProgram) {
+    currentProgram = savedProgram;
+}
 }
 function loadCurrentWorkoutInProgress() {
     const saved = localStorage.getItem('currentWorkoutInProgress');
@@ -489,9 +490,39 @@ function loadTheme() {
 
 // Загрузка программы из localStorage
 function loadProgram() {
-    const savedProgram = localStorage.getItem('currentProgram');
+
+    const savedProgram = localStorage.getItem('selectedWorkoutProgram');
+
     if (savedProgram) {
-        currentProgram = savedProgram;
+        selectWorkoutProgram(savedProgram);
+    }
+}
+
+function switchPage(page) {
+
+    document.querySelectorAll('.page').forEach(p => {
+        p.classList.remove('active');
+    });
+
+    let pageId = page === 'mainMenu'
+        ? 'mainMenu'
+        : page + 'Page';
+
+    const pageElement = document.getElementById(pageId);
+
+    if (pageElement) {
+        pageElement.classList.add('active');
+    }
+}
+
+function openWorkoutPage() {
+
+    switchPage('workout');
+
+    const savedProgram = localStorage.getItem('selectedWorkoutProgram');
+
+    if (savedProgram) {
+        selectWorkoutProgram(savedProgram);
     }
 }
 
@@ -1586,15 +1617,24 @@ function loadWorkoutProgramSelection() {
 }
 
 // Выбор программы тренировок
+
 function selectWorkoutProgram(programId) {
+    // СОХРАНЯЕМ ВЫБОР
+    localStorage.setItem('selectedWorkoutProgram', programId);
+
     if (programId === 'fullbody' || programId === 'glutes') {
-        // Стандартные программы
+
         currentProgram = programId;
+
         document.getElementById('workoutProgramSelection').classList.add('hidden');
         document.getElementById('workoutDaySelection').classList.remove('hidden');
 
         // Обновить название программы
-        const programName = programId === 'fullbody' ? '💪 Full Body' : '🍑 Ягодицы';
+        const programName =
+            programId === 'fullbody'
+                ? '💪 Full Body'
+                : '🍑 Ягодицы';
+
         document.getElementById('currentProgramName').textContent = programName;
 
         updateDate();
@@ -1602,21 +1642,26 @@ function selectWorkoutProgram(programId) {
 
         // Проверить, есть ли сохраненная тренировка
         const today = new Date().toISOString().split('T')[0];
-        if (currentWorkoutInProgress &&
+
+        if (
+            currentWorkoutInProgress &&
             currentWorkoutInProgress.date === today &&
-            currentWorkoutInProgress.program === programId) {
-            // Восстановить сохраненный день
+            currentWorkoutInProgress.program === programId
+        ) {
+
             selectDay(currentWorkoutInProgress.day);
 
-            // Показать уведомление о восстановлении
             setTimeout(() => {
                 showSaveIndicator('restored');
             }, 500);
+
         } else {
             selectDay('A');
         }
+
     } else {
-        // AI план - загрузить как программу
+
+        // AI план
         loadAIPlanAsProgram(programId);
     }
 }

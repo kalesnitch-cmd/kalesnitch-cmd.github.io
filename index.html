@@ -15,6 +15,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -37,15 +38,17 @@
                 <div class="gradient-bg text-white relative z-10" style="padding: 60px 32px 48px;">
                     <div class="text-center">
                         <div class="text-5xl mb-3 animate-in">💪</div>
-                        <h1 class="text-hero mb-2 animate-in">FITNESS APP</h1>
-                        <p class="text-body opacity-80 animate-in" id="currentDate"></p>
+                        <h1 class="text-hero mb-2 animate-in" style="font-family: 'Unbounded', sans-serif; font-weight: 700; letter-spacing: -0.03em;">
+    FITNESS APP
+</h1>
+                        <p class="text-body" style="font-family: 'Unbounded', sans-serif; font-weight: 700; letter-spacing: -0.03em; opacity-80 animate-in" id="currentDate"></p>
                     </div>
                 </div>
 
                 <!-- Menu Grid -->
                 <div class="flex-1 p-6 flex flex-col justify-center" style="gap: 16px;">
                     <div class="grid grid-cols-2 gap-4">
-                        <div onclick="switchPage('workout')" class="menu-card animate-in">
+                        <div onclick="openWorkoutPage()" class="menu-card animate-in">
                             <div class="text-5xl mb-3">🏋️</div>
                             <div class="text-title">Тренировка</div>
                             <div class="text-caption mt-2">Начать сессию</div>
@@ -80,10 +83,10 @@
                             <div class="text-caption mt-2">Редактировать</div>
                         </div>
 
-                        <div onclick="switchPage('exercises')" class="menu-card animate-in" style="animation-delay: 0.9s;">
-                            <div class="text-5xl mb-3 text-center">📚</div>
-                            <div class="text-lg font-semibold text-center">Гайды</div>
-                            <div class="text-sm text-center mt-2 opacity-60">База упражнений</div>
+                        <div onclick="switchPage('exercises')" class="menu-card animate-in">
+                            <div class="text-5xl mb-3">📚</div>
+                            <div class="text-title">Гайды</div>
+                            <div class="text-caption mt-2">База упражнений</div>
                         </div>
                     </div>
                 </div>
