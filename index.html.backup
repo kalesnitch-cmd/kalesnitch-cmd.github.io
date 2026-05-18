@@ -1,0 +1,1741 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#FF6A3D">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Тренировки">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/icon-192.png">
+    <title>💪 Тренировки</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* === APPLE FITNESS + REDDIT DARK THEME === */
+
+            /* Backgrounds - Reddit-inspired Dark */
+            --bg-primary: #0E1113;
+            --bg-secondary: #1A1D21;
+            --bg-tertiary: #22262B;
+            --bg-elevated: #2A2F36;
+
+            /* Card Surfaces - Matte & Layered */
+            --card-bg: #1A1D21;
+            --card-bg-hover: #22262B;
+            --card-border: rgba(255, 255, 255, 0.08);
+            --card-border-hover: rgba(255, 255, 255, 0.12);
+
+            /* Apple Fitness Accent System */
+            --primary: #FF6A3D;
+            --primary-hover: #FF7849;
+            --primary-light: #FF8A5C;
+            --accent-coral: #FF7849;
+            --accent-red: #FF5C5C;
+            --warm-gray: #2A2F36;
+
+            /* Text Hierarchy - Clean & Readable */
+            --text-primary: #F5F7FA;
+            --text-secondary: #A8B0B8;
+            --text-muted: #6B7280;
+            --text-on-accent: #FFFFFF;
+
+            /* Status Colors */
+            --success: #34C759;
+            --warning: #FF9F0A;
+            --danger: #FF3B30;
+            --danger-bg: rgba(255, 59, 48, 0.1);
+
+            /* Shadows - Soft & Realistic */
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.5);
+            --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.35);
+
+            /* Border Radius - iOS Style */
+            --radius-xs: 8px;
+            --radius-sm: 12px;
+            --radius-md: 16px;
+            --radius-lg: 20px;
+            --radius-xl: 24px;
+            --radius-full: 9999px;
+
+            /* Transitions - Apple Spring Physics */
+            --transition-fast: 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --transition-base: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --transition-smooth: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --transition-spring: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+            /* Text Hierarchy - Clean & Readable */
+            --text-primary: #F5F7FA;
+            --text-secondary: #A8B0B8;
+            --text-muted: #6B7280;
+            --text-on-accent: #FFFFFF;
+
+            /* Status Colors */
+            --success: #34C759;
+            --warning: #FF9F0A;
+            --danger: #FF3B30;
+            --danger-bg: rgba(255, 59, 48, 0.1);
+
+            /* Shadows - Soft & Realistic */
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.5);
+            --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.35);
+
+            /* Border Radius - iOS Style */
+            --radius-xs: 8px;
+            --radius-sm: 12px;
+            --radius-md: 16px;
+            --radius-lg: 20px;
+            --radius-xl: 24px;
+            --radius-full: 9999px;
+
+            /* Transitions - Apple Spring Physics */
+            --transition-fast: 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --transition-base: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --transition-smooth: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --transition-spring: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* === LIGHT THEME (Optional) === */
+        body.theme-light {
+            --bg-primary: #FFFFFF;
+            --bg-secondary: #F5F5F5;
+            --bg-tertiary: #EBEBEB;
+            --bg-elevated: #FFFFFF;
+
+            --card-bg: #FFFFFF;
+            --card-bg-hover: #F9F9F9;
+            --card-border: rgba(0, 0, 0, 0.08);
+            --card-border-hover: rgba(0, 0, 0, 0.12);
+
+            --primary: #FF6A3D;
+            --primary-hover: #FF7849;
+            --primary-light: #FF8A5C;
+
+            --text-primary: #1C1C1E;
+            --text-secondary: #6B7280;
+            --text-muted: #9CA3AF;
+
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.12);
+            --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.16);
+            --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+            line-height: 1.5;
+            letter-spacing: -0.01em;
+            position: relative;
+            min-height: 100vh;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        /* Remove all ambient effects */
+        body::before,
+        body::after {
+            display: none;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        h1, h2, h3, .font-display {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+
+        /* Clean Card System - Reddit/Apple Style */
+        .glass-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-base);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-card);
+        }
+
+        .glass-card::before {
+            display: none;
+        }
+
+        .glass-card:hover {
+            background: var(--card-bg-hover);
+            border-color: var(--card-border-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .glass-card:active {
+            transform: translateY(0);
+        }
+
+        /* Apple Fitness Gradient Background */
+        .gradient-bg {
+            background: linear-gradient(135deg,
+                var(--primary) 0%,
+                var(--primary-hover) 100%
+            );
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gradient-bg::before {
+            display: none;
+        }
+            }
+            50% {
+                transform: scale(1.2) rotate(180deg);
+                opacity: 0.6;
+            }
+        }
+
+        /* Fade In Up Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: fadeInUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            /* opacity: 0; */
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Utility Spacing */
+        .space-y-3 > * + * {
+            margin-top: 16px;
+        }
+
+        .space-y-4 > * + * {
+            margin-top: 20px;
+        }
+
+        .space-y-6 > * + * {
+            margin-top: 28px;
+        }
+
+        /* Apple-Style Primary Button */
+        .btn-modern {
+            background: var(--primary);
+            border: none;
+            border-radius: var(--radius-md);
+            padding: 16px 32px;
+            font-weight: 600;
+            font-size: 17px;
+            color: var(--text-on-accent);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all var(--transition-base);
+            box-shadow: var(--shadow-sm);
+            letter-spacing: -0.01em;
+            text-transform: none;
+        }
+
+        .btn-modern::before {
+            display: none;
+        }
+
+        .btn-modern::after {
+            display: none;
+        }
+
+        .btn-modern:hover {
+            transform: scale(1.02);
+            background: var(--primary-hover);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-modern:active {
+            transform: scale(0.98);
+        }
+
+        /* Secondary Button */
+        .btn-secondary {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-primary);
+            font-weight: 600;
+            transition: all var(--transition-base);
+            border-radius: var(--radius-md);
+            padding: 16px 32px;
+            font-size: 17px;
+            cursor: pointer;
+        }
+
+        .btn-secondary:hover {
+            background: var(--card-bg-hover);
+            border-color: var(--card-border-hover);
+            transform: scale(1.02);
+        }
+
+        .btn-secondary:active {
+            transform: scale(0.98);
+        }
+
+        /* Danger Button */
+        .btn-danger {
+            background: var(--danger-bg);
+            border: 1px solid var(--danger);
+            color: var(--danger);
+            font-weight: 600;
+            transition: all var(--transition-base);
+            border-radius: var(--radius-md);
+            padding: 16px 32px;
+            font-size: 17px;
+            cursor: pointer;
+        }
+
+        .btn-danger:hover {
+            background: var(--danger);
+            color: #FFFFFF;
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* Clean Card System */
+        .card-modern {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            position: relative;
+            transition: all var(--transition-base);
+            border: 1px solid var(--card-border);
+            overflow: hidden;
+            box-shadow: var(--shadow-card);
+        }
+
+        .card-modern::before {
+            display: none;
+        }
+
+        .card-modern:hover {
+            background: var(--card-bg-hover);
+            border-color: var(--card-border-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Apple-Style Menu Card */
+        .menu-card {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-xl);
+            padding: 32px 20px;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            border: 1px solid var(--card-border);
+            position: relative;
+            overflow: hidden;
+            color: var(--text-primary);
+            box-shadow: var(--shadow-card);
+        }
+
+        .menu-card::before {
+            display: none;
+        }
+
+        .menu-card::after {
+            display: none;
+        }
+
+        .menu-card:hover {
+            background: var(--card-bg-hover);
+            border-color: var(--card-border-hover);
+            transform: translateY(-2px) scale(1.01);
+            box-shadow: var(--shadow-md);
+        }
+
+        .menu-card:active {
+            transform: translateY(0) scale(0.99);
+        }
+
+        /* Clean Input Fields */
+        .input-modern {
+            background: var(--bg-secondary);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: 14px 16px;
+            color: var(--text-primary);
+            font-size: 17px;
+            transition: all var(--transition-base);
+            outline: none;
+            font-weight: 500;
+        }
+
+        .input-modern:focus {
+            border-color: var(--primary);
+            background: var(--bg-tertiary);
+            box-shadow: 0 0 0 3px rgba(255, 106, 61, 0.1);
+        }
+
+        .input-modern::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* Clean Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .theme-toggle:hover {
+            background: var(--card-bg-hover);
+            border-color: var(--card-border-hover);
+            transform: scale(1.1);
+            box-shadow: var(--shadow-md);
+        }
+
+        .theme-toggle:active {
+            transform: scale(1.05) rotate(180deg);
+        }
+
+        .theme-icon {
+            font-size: 28px;
+            transition: all var(--transition-base);
+        }
+
+        body:not(.theme-light) .theme-icon-sun {
+            display: none;
+        }
+
+        body.theme-light .theme-icon-moon {
+            display: none;
+        }
+
+        /* iOS-Style Day Selector Buttons */
+        .day-btn {
+            background: var(--bg-secondary);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: 16px 12px;
+            transition: all var(--transition-base);
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .day-btn::before {
+            display: none;
+        }
+
+        .day-btn::after {
+            display: none;
+        }
+
+        .day-btn:hover {
+            background: var(--card-bg);
+            color: var(--text-primary);
+            transform: scale(1.02);
+            border-color: var(--card-border-hover);
+        }
+
+        .day-btn.active {
+            background: var(--primary);
+            border: 1px solid var(--primary);
+            box-shadow: var(--shadow-sm);
+            color: var(--text-on-accent);
+            font-weight: 700;
+        }
+
+        .day-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Details/Summary стилизация */
+        details {
+            transition: all 0.3s;
+        }
+
+        details summary {
+            list-style: none;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        details summary::-webkit-details-marker {
+            display: none;
+        }
+
+        details[open] summary .arrow {
+            transform: rotate(180deg);
+        }
+
+        .arrow {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Clean Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(14, 17, 19, 0.95);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            max-width: 95%;
+            max-height: 88vh;
+            overflow-y: auto;
+            border: 1px solid var(--card-border);
+            box-shadow: var(--shadow-lg);
+            animation: slideUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            scrollbar-width: thin;
+            scrollbar-color: var(--card-border) transparent;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* YouTube Link */
+        .youtube-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid rgba(255, 0, 0, 0.25);
+            border-radius: var(--radius-md);
+            color: #ff5555;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all var(--transition-base);
+        }
+
+        .youtube-link:hover {
+            background: rgba(255, 0, 0, 0.15);
+            border-color: rgba(255, 0, 0, 0.4);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(255, 0, 0, 0.2);
+        }
+
+        /* Clean Exercise Cards */
+        .exercise-item {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 18px;
+            margin-bottom: 12px;
+            transition: all var(--transition-base);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-card);
+        }
+
+        .exercise-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--primary);
+            opacity: 0;
+            transition: opacity var(--transition-base);
+            pointer-events: none;
+        }
+
+        .exercise-item::after {
+            display: none;
+        }
+
+        .exercise-item:hover {
+            background: var(--card-bg-hover);
+            border-color: var(--card-border-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .exercise-item:hover::before {
+            opacity: 1;
+        }
+
+        .exercise-name {
+            font-size: 17px;
+            font-weight: 600;
+            line-height: 1.3;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            letter-spacing: -0.01em;
+        }
+
+        .exercise-details {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 8px;
+            font-weight: 500;
+        }
+
+        /* Clean Set Input Fields */
+        .set-input {
+            background: var(--bg-secondary);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: 14px 12px;
+            color: var(--text-primary);
+            font-size: 17px;
+            width: 100%;
+            transition: all var(--transition-base);
+            font-weight: 600;
+            text-align: center;
+            letter-spacing: -0.01em;
+        }
+
+        .set-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255, 106, 61, 0.1);
+            background: var(--bg-tertiary);
+        }
+
+        .set-input::placeholder {
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        /* Кнопка "Назад к выбору программы" */
+        .back-button {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 12px 20px;
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.15s;
+            width: 100%;
+            text-align: center;
+            font-family: 'Manrope', sans-serif;
+        }
+
+        .back-button:hover {
+            background: var(--card-bg-hover);
+            border-color: var(--card-border-hover);
+            transform: translateY(-1px);
+        }
+
+        .back-button:active {
+            transform: scale(0.98);
+        }
+
+        /* Скрытие спиннеров */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn 0.2s;
+        }
+
+        /* Premium Progress Bar */
+        .progress-bar {
+            height: 8px;
+            background: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid var(--card-border);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-hover));
+            transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 20px var(--glow-soft);
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: shimmer 2.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Дополнительные утилиты */
+        .space-y-3 > * + * {
+            margin-top: 16px;
+        }
+
+        .space-y-4 > * + * {
+            margin-top: 20px;
+        }
+
+        .space-y-6 > * + * {
+            margin-top: 28px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Скроллбар */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Clean Program Cards */
+        .program-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            box-shadow: var(--shadow-card);
+            color: var(--text-primary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .program-card::before {
+            display: none;
+        }
+
+        .program-card::after {
+            display: none;
+        }
+
+        .program-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+            border-color: var(--card-border-hover);
+            background: var(--card-bg-hover);
+        }
+
+        .program-card:active {
+            transform: translateY(0);
+        }
+
+        .program-card .text-white {
+            color: var(--text-primary) !important;
+            font-weight: 700;
+        }
+
+        /* Icon Buttons */
+        .icon-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: var(--radius-sm);
+            transition: all 0.15s;
+            color: var(--text-muted);
+        }
+
+        .icon-btn:hover {
+            background: var(--card-bg);
+            color: var(--text-primary);
+        }
+
+        .icon-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Chips and Badges */
+        .chip {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--primary);
+            background: rgba(255, 106, 61, 0.1);
+            border: 1px solid rgba(255, 106, 61, 0.2);
+            border-radius: var(--radius-xs);
+            padding: 4px 10px;
+            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        /* Иконки и эмодзи контейнеры */
+        .icon-container {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            flex-shrink: 0;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: all var(--transition-base);
+        }
+
+        .icon-container:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.05);
+        }
+
+        .icon-container-lg {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            font-size: 28px;
+        }
+
+        /* Секции с заголовками */
+        .section-label {
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-family: 'Manrope', sans-serif;
+            margin-bottom: 9px;
+        }
+
+        /* Карточка упражнения в стиле pitanie */
+        .meal-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            transition: all 0.15s;
+        }
+
+        .meal-card:hover {
+            background: var(--card-bg-hover);
+            border-color: var(--card-border-hover);
+        }
+
+        .meal-card-header {
+            display: flex;
+            align-items: center;
+            padding: 13px 14px;
+            gap: 10px;
+        }
+
+        .meal-card-footer {
+            display: flex;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .meal-card-stat {
+            flex: 1;
+            text-align: center;
+            padding: 6px 0;
+            border-right: 1px solid rgba(255, 255, 255, 0.04);
+            font-size: 11px;
+            font-family: 'Manrope', sans-serif;
+        }
+
+        .meal-card-stat:last-child {
+            border-right: none;
+        }
+
+        /* Итоговые блоки */
+        .summary-card {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.08), rgba(139, 92, 246, 0.04));
+            border: 1px solid rgba(139, 92, 246, 0.15);
+            border-radius: var(--radius-xxl);
+            padding: 16px 18px;
+        }
+
+        .summary-metric {
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 1;
+            color: var(--primary);
+        }
+
+        .summary-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        /* Прогресс-бары для макронутриентов */
+        .macro-progress-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .macro-progress {
+            flex: 1;
+        }
+
+        .macro-progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 3px;
+            font-size: 9px;
+            color: var(--text-tertiary);
+            font-family: 'Manrope', sans-serif;
+            font-weight: 700;
+        }
+
+        .macro-progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .macro-progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.4s;
+        }
+
+        .macro-progress-fill.protein { background: var(--accent-blue); }
+        .macro-progress-fill.fat { background: var(--accent-orange); }
+        .macro-progress-fill.carbs { background: var(--accent-green); }
+
+        /* Sticky header улучшенный */
+        .header-sticky {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--card-border);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+        }
+
+        .header-content {
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .header-top {
+            padding-top: 16px;
+            padding-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .header-tabs {
+            display: flex;
+            gap: 2px;
+        }
+
+        .header-tab {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px 14px 13px;
+            color: var(--text-tertiary);
+            font-weight: 500;
+            font-size: 12px;
+            font-family: 'Manrope', sans-serif;
+            border-bottom: 2px solid transparent;
+            transition: all 0.15s;
+        }
+
+        .header-tab.active {
+            color: var(--primary-solid);
+            font-weight: 700;
+            border-bottom-color: var(--primary-solid);
+        }
+
+        /* Кнопки переключения (Toggle) */
+        .btn-toggle {
+            border: 1.5px solid var(--card-border);
+            background: var(--card-bg);
+            color: var(--text-primary);
+            border-radius: 12px;
+            padding: 8px 18px;
+            font-weight: 800;
+            font-size: 13px;
+            font-family: 'Manrope', sans-serif;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .btn-toggle.active {
+            border-color: var(--primary-solid);
+            background: var(--primary);
+            color: var(--text-on-accent);
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        .btn-toggle:hover {
+            transform: translateY(-1px);
+        }
+
+        /* Информационные блоки */
+        .info-box {
+            background: rgba(139, 92, 246, 0.06);
+            border: 1px solid rgba(139, 92, 246, 0.12);
+            border-radius: var(--radius-lg);
+            padding: 11px 14px;
+            display: flex;
+            gap: 7px;
+            margin-top: 14px;
+        }
+
+        .info-box-icon {
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .info-box-text {
+            font-size: 11px;
+            color: var(--text-secondary);
+            line-height: 1.55;
+            font-family: 'Manrope', sans-serif;
+        }
+
+        .info-box-text strong {
+            color: var(--primary);
+        }
+
+        /* Premium Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-deep) 100%);
+            box-shadow: 0 8px 32px var(--glow-strong);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            z-index: 100;
+            color: var(--text-on-accent);
+            font-weight: 900;
+            border: 2px solid var(--card-border);
+        }
+
+        .fab::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 50%;
+            padding: 2px;
+            background: linear-gradient(135deg, var(--lavender), var(--primary-rich));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity var(--transition-base);
+        }
+
+        .fab:hover {
+            box-shadow: 0 12px 48px var(--glow-strong), 0 0 80px var(--glow-ambient);
+            transform: scale(1.15) rotate(90deg);
+        }
+
+        .fab:hover::before {
+            opacity: 1;
+        }
+
+        .fab:active {
+            transform: scale(1.05) rotate(90deg);
+        }
+
+        /* Floating Back Button */
+        .fab-back {
+            position: fixed;
+            bottom: 28px;
+            left: 28px;
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 2px solid var(--card-border);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            z-index: 100;
+            color: var(--text-primary);
+            font-weight: 900;
+        }
+
+        .fab-back.active {
+            display: flex;
+        }
+
+        .fab-back:hover {
+            background: var(--card-bg-hover);
+            border-color: var(--primary);
+            box-shadow: 0 8px 32px var(--glow-soft);
+            transform: scale(1.15);
+        }
+
+        .fab-back:active {
+            transform: scale(1.05);
+        }
+
+        /* Premium Keyboard Done Button */
+        .keyboard-done-btn {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-deep) 100%);
+            color: var(--text-on-accent);
+            padding: 20px;
+            text-align: center;
+            font-weight: 900;
+            font-size: 18px;
+            z-index: 9999;
+            display: none;
+            box-shadow: var(--shadow-lg);
+            cursor: pointer;
+            user-select: none;
+            letter-spacing: -0.01em;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .keyboard-done-btn.active {
+            display: block;
+            animation: slideUpBtn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        @keyframes slideUpBtn {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Clean Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--card-border);
+            border-radius: 5px;
+            border: 2px solid var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--card-border-hover);
+        }
+    </style>
+</head>
+<body>
+    <!-- Переключатель темы -->
+    <div class="theme-toggle" onclick="toggleTheme()" title="Переключить тему">
+        <span class="theme-icon theme-icon-sun">☀️</span>
+        <span class="theme-icon theme-icon-moon">🌙</span>
+    </div>
+
+    <!-- Кнопка "Готово" для закрытия клавиатуры -->
+    <div class="keyboard-done-btn" id="keyboardDoneBtn" onclick="hideKeyboardWithButton()">
+        ✓ Готово
+    </div>
+
+    <!-- Плавающая кнопка "Назад" -->
+    <div class="fab-back" id="fabBack" onclick="switchPage('mainMenu')">
+        ←
+    </div>
+
+    <div class="container mx-auto">
+
+        <!-- Главное меню -->
+        <div id="mainMenu" class="page active">
+            <div class="min-h-screen flex flex-col">
+                <!-- Premium Hero Header -->
+                <div class="gradient-bg text-white relative z-10" style="padding: 60px 32px 48px;">
+                    <div class="text-center">
+                        <div class="text-5xl mb-3 animate-in" style="animation-delay: 0.1s;">💪</div>
+                        <h1 class="text-3xl font-bold tracking-tight mb-2 animate-in" style="letter-spacing: -0.02em; animation-delay: 0.2s;">
+                            Тренировки
+                        </h1>
+                        <p class="text-base opacity-80 font-medium animate-in" style="animation-delay: 0.3s;" id="currentDate"></p>
+                    </div>
+                </div>
+
+                <!-- Clean Menu Grid -->
+                <div class="flex-1 p-6 flex flex-col justify-center" style="gap: 16px;">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div onclick="switchPage('workout')" class="menu-card animate-in" style="animation-delay: 0.4s;">
+                            <div class="text-5xl mb-3 text-center">🏋️</div>
+                            <div class="text-lg font-semibold text-center">Тренировка</div>
+                            <div class="text-sm text-center mt-2 opacity-60">Начать сессию</div>
+                        </div>
+
+                        <div onclick="switchPage('history')" class="menu-card animate-in" style="animation-delay: 0.5s;">
+                            <div class="text-5xl mb-3 text-center">📅</div>
+                            <div class="text-lg font-semibold text-center">История</div>
+                            <div class="text-sm text-center mt-2 opacity-60">Прошлые тренировки</div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div onclick="switchPage('aiTrainer')" class="menu-card animate-in" style="animation-delay: 0.6s; position: relative;">
+                            <div class="absolute top-3 right-3 text-xs px-2 py-1 rounded-full" style="background: var(--primary); color: white; font-weight: 600;">AI</div>
+                            <div class="text-5xl mb-3 text-center">🤖</div>
+                            <div class="text-lg font-semibold text-center">AI Тренер</div>
+                            <div class="text-sm text-center mt-2 opacity-60">Персональный план</div>
+                        </div>
+
+                        <div onclick="switchPage('progress')" class="menu-card animate-in" style="animation-delay: 0.7s;">
+                            <div class="text-5xl mb-3 text-center">📈</div>
+                            <div class="text-lg font-semibold text-center">Прогресс</div>
+                            <div class="text-sm text-center mt-2 opacity-60">Статистика</div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div onclick="switchPage('myPlan')" class="menu-card animate-in" style="animation-delay: 0.8s;">
+                            <div class="text-5xl mb-3 text-center">📝</div>
+                            <div class="text-lg font-semibold text-center">Мой план</div>
+                            <div class="text-sm text-center mt-2 opacity-60">Редактировать</div>
+                        </div>
+
+                        <div onclick="switchPage('exercises')" class="menu-card animate-in" style="animation-delay: 0.9s;">
+                            <div class="text-5xl mb-3 text-center">📚</div>
+                            <div class="text-lg font-semibold text-center">Гайды</div>
+                            <div class="text-sm text-center mt-2 opacity-60">База упражнений</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Страница тренировки -->
+        <div id="workoutPage" class="page">
+            <div class="header-sticky">
+                <div class="header-content">
+                    <div class="header-top">
+                        <button onclick="switchPage('mainMenu')" class="text-xl z-10">←</button>
+                        <h1 class="text-lg font-bold flex-1 text-center z-10 font-display">Тренировка</h1>
+                        <div class="w-8"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4" id="workoutProgramSelection">
+                <div class="card-modern mb-4">
+                    <h3 class="text-xl font-semibold mb-3 text-center">Выбери программу тренировок</h3>
+                    <p class="text-sm opacity-60 text-center mb-4">Стандартные программы или создай свою с AI</p>
+
+                    <div class="space-y-3">
+                        <button onclick="selectWorkoutProgram('fullbody')" class="program-card w-full text-left flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <div class="text-4xl">💪</div>
+                                <div>
+                                    <div class="text-lg font-semibold">Full Body</div>
+                                    <div class="text-sm opacity-70 mt-1">Программа на всё тело</div>
+                                    <div class="text-xs opacity-60 mt-1">3 дня в неделю • Жим лёжа</div>
+                                </div>
+                            </div>
+                            <div class="text-2xl opacity-60">→</div>
+                        </button>
+
+                        <button onclick="selectWorkoutProgram('glutes')" class="program-card w-full text-left flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <div class="text-4xl">🍑</div>
+                                <div>
+                                    <div class="text-lg font-semibold">Ягодицы</div>
+                                    <div class="text-sm opacity-70 mt-1">Программа на ноги и ягодицы</div>
+                                    <div class="text-xs opacity-60 mt-1">3 дня в неделю • Нижняя часть</div>
+                                </div>
+                            </div>
+                            <div class="text-2xl opacity-75">→</div>
+                        </button>
+
+                        <div id="aiProgramsList"></div>
+                    </div>
+                </div>
+
+                <div class="card-modern" style="background: linear-gradient(135deg, rgba(167, 139, 250, 0.1) 0%, rgba(139, 92, 246, 0.08) 100%); border: 2px dashed var(--card-border-hover); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); position: relative; overflow: hidden;">
+                    <div style="position: absolute; inset: 0; background: radial-gradient(circle at 50% 50%, var(--glow-soft), transparent 70%); opacity: 0.3;"></div>
+                    <div class="text-center p-4 relative z-10">
+                        <div class="text-4xl mb-3">🤖</div>
+                        <div class="font-bold mb-3 text-lg font-display">Нет подходящей программы?</div>
+                        <div class="text-sm opacity-80 mb-4">Создай персональный план с AI Тренером</div>
+                        <button onclick="switchPage('aiTrainer')" class="btn-modern">
+                            ✨ Создать AI план
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4 hidden" id="workoutDaySelection">
+                <button onclick="backToProgramSelection()" class="back-button mb-4">
+                    ← Назад к выбору программы
+                </button>
+
+                <div class="card-modern mb-4" style="background: var(--card-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);">
+                    <div class="flex items-center justify-between mb-2">
+                        <div>
+                            <div class="text-xs opacity-60 mb-2 font-semibold tracking-wide">ТЕКУЩАЯ ПРОГРАММА</div>
+                            <div class="text-xl font-bold font-display" id="currentProgramName">💪 Full Body</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-modern mb-4">
+                    <p class="text-sm opacity-70 mb-4 text-center font-semibold">Выбери день тренировки</p>
+                    <div class="grid grid-cols-3 gap-3">
+                        <button onclick="selectDay('A')" class="day-btn text-center font-semibold" data-day="A">
+                            <div class="text-base">День А</div>
+                            <div class="text-xs opacity-70 mt-1">Тяжёлый</div>
+                        </button>
+                        <button onclick="selectDay('B')" class="day-btn text-center font-semibold" data-day="B">
+                            <div class="text-base">День Б</div>
+                            <div class="text-xs opacity-70 mt-1">Объёмный</div>
+                        </button>
+                        <button onclick="selectDay('C')" class="day-btn text-center font-semibold" data-day="C">
+                            <div class="text-base">День В</div>
+                            <div class="text-xs opacity-70 mt-1">Лёгкий</div>
+                        </button>
+                    </div>
+                </div>
+
+                <button onclick="showAddExerciseFromGuideModal()" class="btn-modern w-full mb-4">
+                    ➕ Добавить упражнение из справочника
+                </button>
+
+                <div id="exercisesList" class="mb-24"></div>
+
+                <button onclick="completeWorkout()" class="btn-modern w-full text-lg">
+                    ✅ Завершить тренировку
+                </button>
+            </div>
+
+            <div class="fab" onclick="showAddCustomExerciseModal()">+</div>
+        </div>
+
+        <!-- Страница истории -->
+        <div id="historyPage" class="page">
+            <div class="header-sticky">
+                <div class="header-content">
+                    <div class="header-top">
+                        <button onclick="switchPage('mainMenu')" class="text-xl z-10">←</button>
+                        <h1 class="text-lg font-bold flex-1 text-center z-10 font-display">История</h1>
+                        <div class="w-8"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4" id="historyContent"></div>
+        </div>
+
+        <!-- Страница прогресса -->
+        <div id="progressPage" class="page">
+            <div class="header-sticky">
+                <div class="header-content">
+                    <div class="header-top">
+                        <button onclick="switchPage('mainMenu')" class="text-xl z-10">←</button>
+                        <h1 class="text-lg font-bold flex-1 text-center z-10 font-display">Прогресс</h1>
+                        <div class="w-8"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4">
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="card-modern text-center">
+                        <div class="text-4xl font-bold font-display mb-2" style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-deep) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;" id="totalWorkouts">0</div>
+                        <div class="text-xs opacity-70 mt-2 font-semibold tracking-wide">ВСЕГО ТРЕНИРОВОК</div>
+                    </div>
+                    <div class="card-modern text-center">
+                        <div class="text-4xl font-bold font-display mb-2" style="background: linear-gradient(135deg, #10b981, #059669); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;" id="currentStreak">0</div>
+                        <div class="text-xs opacity-70 mt-2 font-semibold tracking-wide">ДНЕЙ ПОДРЯД</div>
+                    </div>
+                </div>
+
+                <div class="card-modern mb-4">
+                    <p class="text-sm opacity-70 mb-4 text-center font-semibold">Выбери программу</p>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="switchProgressProgram('fullbody')" class="program-btn day-btn text-center font-semibold" id="progressFullbodyBtn">
+                            <div class="text-base">💪 Full Body</div>
+                            <div class="text-xs opacity-70 mt-1">Жим лёжа</div>
+                        </button>
+                        <button onclick="switchProgressProgram('glutes')" class="program-btn day-btn text-center font-semibold" id="progressGlutesBtn">
+                            <div class="text-base">🍑 Ягодицы</div>
+                            <div class="text-xs opacity-70 mt-1">Ноги и ягодицы</div>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card-modern mb-4" id="progressExercisesList"></div>
+            </div>
+        </div>
+
+        <!-- Страница гайдов -->
+        <div id="exercisesPage" class="page">
+            <div class="header-sticky">
+                <div class="header-content">
+                    <div class="header-top">
+                        <button onclick="switchPage('mainMenu')" class="text-xl z-10">←</button>
+                        <h1 class="text-lg font-bold flex-1 text-center z-10 font-display">Гайды</h1>
+                        <div class="w-8"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4" id="exercisesGuide"></div>
+        </div>
+
+        <!-- Страница AI Тренера -->
+        <div id="aiTrainerPage" class="page">
+            <div class="header-sticky">
+                <div class="header-content">
+                    <div class="header-top">
+                        <button onclick="switchPage('mainMenu')" class="text-xl z-10">←</button>
+                        <h1 class="text-lg font-bold flex-1 text-center z-10 font-display">🤖 AI Тренер</h1>
+                        <div class="w-8"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4">
+                <div class="card-modern mb-4">
+                    <h3 class="text-xl font-bold mb-4 font-display" style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-deep) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Расскажи о себе</h3>
+                    <p class="text-sm opacity-70 mb-4">AI составит персональный план тренировок на основе твоих данных</p>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="text-sm opacity-80 block mb-2 font-semibold">Пол</label>
+                            <select id="aiGender" class="input-modern w-full">
+                                <option value="Мужской">Мужской</option>
+                                <option value="Женский">Женский</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="text-sm opacity-80 block mb-2 font-semibold">Возраст (лет)</label>
+                            <input type="number" id="aiAge" placeholder="28" class="input-modern w-full">
+                        </div>
+
+                        <div>
+                            <label class="text-sm opacity-80 block mb-2 font-semibold">Вес (кг)</label>
+                            <input type="number" id="aiWeight" placeholder="70" class="input-modern w-full">
+                        </div>
+
+                        <div>
+                            <label class="text-sm opacity-80 block mb-2 font-semibold">Рост (см)</label>
+                            <input type="number" id="aiHeight" placeholder="173" class="input-modern w-full">
+                        </div>
+
+                        <div>
+                            <label class="text-sm opacity-80 block mb-2 font-semibold">Опыт тренировок</label>
+                            <select id="aiExperience" class="input-modern w-full">
+                                <option value="Новичок (0-6 месяцев)">Новичок (0-6 месяцев)</option>
+                                <option value="Начальный (6-12 месяцев)">Начальный (6-12 месяцев)</option>
+                                <option value="Средний (1-3 года)">Средний (1-3 года)</option>
+                                <option value="Продвинутый (3+ года)">Продвинутый (3+ года)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="text-sm opacity-80 block mb-2 font-semibold">Цель тренировок</label>
+                            <select id="aiGoal" class="input-modern w-full">
+                                <option value="Набор мышечной массы">Набор мышечной массы</option>
+                                <option value="Похудение и рельеф">Похудение и рельеф</option>
+                                <option value="Увеличение силы">Увеличение силы</option>
+                                <option value="Общая физическая форма">Общая физическая форма</option>
+                                <option value="Развитие ягодиц и ног">Развитие ягодиц и ног</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="text-sm opacity-80 block mb-2 font-semibold">Что хочешь прорабатывать больше?</label>
+                            <select id="aiFocusAreas" class="input-modern w-full" multiple size="4">
+                                <option value="Ноги и ягодицы">🍑 Ноги и ягодицы</option>
+                                <option value="Грудь и руки">💪 Грудь и руки</option>
+                                <option value="Спина и плечи">🦾 Спина и плечи</option>
+                                <option value="Пресс и кор">🔥 Пресс и кор</option>
+                            </select>
+                            <p class="text-xs opacity-60 mt-2">Можно выбрать несколько (удерживай Ctrl/Cmd)</p>
+                        </div>
+
+                        <div>
+                            <label class="text-sm opacity-80 block mb-2 font-semibold">Доступное оборудование</label>
+                            <select id="aiEquipment" class="input-modern w-full">
+                                <option value="Полный зал (штанги, гантели, тренажеры)">Полный зал</option>
+                                <option value="Базовое (штанга, гантели, скамья)">Базовое оборудование</option>
+                                <option value="Только гантели">Только гантели</option>
+                                <option value="Без оборудования (дома)">Без оборудования</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="text-sm opacity-80 block mb-2 font-semibold">Предпочитаемые упражнения (необязательно)</label>
+                            <textarea id="aiPreferredExercises" placeholder="Например: приседания, жим лёжа, становая тяга, подтягивания..." class="input-modern w-full" rows="3"></textarea>
+                            <p class="text-xs opacity-60 mt-2">Укажи упражнения, которые тебе нравятся или которые ты хочешь включить в план</p>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="generateAIPlan()" id="generateBtn" class="btn-modern w-full text-lg mb-4">
+                    ✨ Составить план
+                </button>
+
+                <p class="text-xs opacity-60 text-center mb-4">💡 Не понравился план? Нажми "Составить план" ещё раз - каждый раз будет новый вариант!</p>
+
+                <div id="aiPlanResult" class="hidden">
+                    <div class="card-modern">
+                        <h3 class="text-xl font-bold mb-4 font-display" style="background: linear-gradient(135deg, var(--secondary), var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Твой персональный план</h3>
+                        <div id="aiPlanContent" class="text-sm opacity-90 whitespace-pre-wrap"></div>
+                        <button onclick="saveAIPlanToWorkouts()" class="btn-modern w-full text-lg mt-4">
+                            💾 Добавить в Тренировки
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Страница "Мой план" -->
+        <div id="myPlanPage" class="page">
+            <div class="header-sticky">
+                <div class="header-content">
+                    <div class="header-top">
+                        <button onclick="switchPage('mainMenu')" class="text-xl z-10">←</button>
+                        <h1 class="text-lg font-bold flex-1 text-center z-10 font-display">📝 Мой план</h1>
+                        <div class="w-8"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4">
+                <div class="card-modern mb-4">
+                    <p class="text-sm opacity-70 mb-4 text-center font-semibold">Выбери программу для редактирования</p>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="switchProgramForEdit('fullbody')" class="program-btn day-btn text-center font-semibold" id="editFullbodyBtn">
+                            <div class="text-base">💪 Full Body</div>
+                            <div class="text-xs opacity-70 mt-1">Жим лёжа</div>
+                        </button>
+                        <button onclick="switchProgramForEdit('glutes')" class="program-btn day-btn text-center font-semibold" id="editGlutesBtn">
+                            <div class="text-base">🍑 Ягодицы</div>
+                            <div class="text-xs opacity-70 mt-1">Ноги и ягодицы</div>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <button onclick="resetToDefaultProgram()" class="w-full py-4 rounded-xl font-bold text-base btn-danger" style="background: var(--danger-bg); border: 2px solid var(--danger); color: var(--danger);">
+                        🔄 Сбросить к стандартному плану
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-3 gap-3 mb-4">
+                    <button onclick="selectDayForEdit('A')" class="day-btn text-center font-semibold" data-edit-day="A">
+                        <div class="text-base">День А</div>
+                    </button>
+                    <button onclick="selectDayForEdit('B')" class="day-btn text-center font-semibold" data-edit-day="B">
+                        <div class="text-base">День Б</div>
+                    </button>
+                    <button onclick="selectDayForEdit('C')" class="day-btn text-center font-semibold" data-edit-day="C">
+                        <div class="text-base">День В</div>
+                    </button>
+                </div>
+
+                <div id="editExercisesList"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Модальное окно добавления упражнения из справочника -->
+    <div id="addExerciseFromGuideModal" class="modal">
+        <div class="modal-content" style="max-width: 95%; max-height: 88vh; overflow-y: auto;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+                <h3 class="text-xl font-bold font-display">Добавить упражнение</h3>
+                <button onclick="closeAddExerciseFromGuideModal()" class="icon-btn text-2xl">✕</button>
+            </div>
+
+            <div id="exercisesList" class="space-y-3 mb-4" style="max-height: 500px; overflow-y: auto;">
+                <!-- Список упражнений будет здесь -->
+            </div>
+
+            <button onclick="closeAddExerciseFromGuideModal()" class="w-full py-4 rounded-xl font-bold text-base btn-secondary" style="background: var(--card-bg); border: 2px solid var(--card-border); color: var(--text-primary);">Отмена</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно редактирования упражнения -->
+    <div id="editExerciseModal" class="modal">
+        <div class="modal-content">
+            <h3 class="text-xl font-bold mb-4 font-display">Редактировать упражнение</h3>
+
+            <div class="mb-4">
+                <label class="text-sm opacity-80 block mb-2 font-semibold">Название</label>
+                <input type="text" id="editExerciseName" class="input-modern w-full">
+            </div>
+
+            <div class="mb-4">
+                <label class="text-sm opacity-80 block mb-2 font-semibold">Количество подходов</label>
+                <input type="number" id="editExerciseSets" min="1" max="10" class="input-modern w-full">
+            </div>
+
+            <div class="mb-4">
+                <label class="text-sm opacity-80 block mb-2 font-semibold">Количество повторений</label>
+                <input type="text" id="editExerciseReps" placeholder="8-10 или 12" class="input-modern w-full">
+            </div>
+
+            <button onclick="saveExerciseEdit()" class="btn-modern w-full mb-3">Сохранить</button>
+            <button onclick="closeEditExerciseModal()" class="w-full py-4 rounded-xl font-bold text-base btn-secondary" style="background: var(--card-bg); border: 2px solid var(--card-border); color: var(--text-primary);">Отмена</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно создания своего упражнения -->
+    <div id="addCustomExerciseModal" class="modal">
+        <div class="modal-content">
+            <h3 class="text-xl font-bold mb-4 font-display">Создать своё упражнение</h3>
+
+            <div class="mb-4">
+                <label class="text-sm opacity-80 block mb-2 font-semibold">Название упражнения</label>
+                <input type="text" id="customExerciseName" placeholder="Название упражнения" class="input-modern w-full">
+            </div>
+
+            <div class="mb-4">
+                <label class="text-sm opacity-80 block mb-2 font-semibold">Количество подходов (по умолчанию 4)</label>
+                <input type="number" id="customExerciseSets" placeholder="4" min="1" max="10" class="input-modern w-full">
+            </div>
+
+            <div class="mb-4">
+                <label class="text-sm opacity-80 block mb-2 font-semibold">Количество повторений (по умолчанию 12)</label>
+                <input type="text" id="customExerciseReps" placeholder="12" class="input-modern w-full">
+            </div>
+
+            <button onclick="addCustomExercise()" class="btn-modern w-full mb-3">Добавить</button>
+            <button onclick="closeAddCustomExerciseModal()" class="w-full py-4 rounded-xl font-bold text-base btn-secondary" style="background: var(--card-bg); border: 2px solid var(--card-border); color: var(--text-primary);">Отмена</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно редактирования истории -->
+    <div id="editHistoryModal" class="modal">
+        <div class="modal-content" style="max-width: 95%; max-height: 88vh; overflow-y: auto;">
+            <h3 class="text-xl font-bold mb-4 font-display">Редактировать тренировку</h3>
+            <input type="hidden" id="editHistoryIndex">
+            <div id="editHistoryExercises" class="mb-4"></div>
+            <button onclick="saveHistoryEdit()" class="btn-modern w-full mb-3">Сохранить изменения</button>
+            <button onclick="closeEditHistoryModal()" class="w-full py-4 rounded-xl font-bold text-base btn-secondary" style="background: var(--card-bg); border: 2px solid var(--card-border); color: var(--text-primary);">Отмена</button>
+        </div>
+    </div>
+
+    <script src="data.js?v=15"></script>
+    <script src="app.js?v=15"></script>
+</body>
+</html>
