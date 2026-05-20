@@ -58,34 +58,61 @@ function init() {
 
 // Настроить обработчики автосохранения
 function setupAutosaveHandlers() {
+
     // Сохранение при закрытии/перезагрузке страницы
-    window.addEventListener('beforeunload', (e) => {
-        if (currentWorkoutData && Object.keys(currentWorkoutData).length > 0) {
+    window.addEventListener('beforeunload', () => {
+
+        if (
+            currentWorkoutData &&
+            Object.keys(currentWorkoutData).length > 0
+        ) {
             saveCurrentWorkoutInProgress();
         }
     });
 
-    // Сохранение при потере фокуса (свернули приложение)
+    // Сохранение при сворачивании приложения
     document.addEventListener('visibilitychange', () => {
-        if (document.hidden && currentWorkoutData && Object.keys(currentWorkoutData).length > 0) {
+
+        if (
+            document.hidden &&
+            currentWorkoutData &&
+            Object.keys(currentWorkoutData).length > 0
+        ) {
             saveCurrentWorkoutInProgress();
         }
     });
 
-    // Сохранение при паузе (для Telegram Mini App)
-    if (window.Telegram?.WebApp) {
-        window.Telegram.WebApp.onEvent('viewportChanged', () => {
-            if (currentWorkoutData && Object.keys(currentWorkoutData).length > 0) {
-                saveCurrentWorkoutInProgress();
-            }
-        });
-    }
+    // Автосохранение ТОЛЬКО после ввода в поле
+    document.addEventListener('focusout', (e) => {
 
-    // Периодическое автосохранение каждые 30 секунд
+        if (e.target.classList.contains('set-input')) {
+
+            if (
+                currentWorkoutData &&
+                Object.keys(currentWorkoutData).length > 0
+            ) {
+
+                saveCurrentWorkoutInProgress();
+
+                showSaveIndicator('saved');
+            }
+        }
+    });
+
+    // Дополнительное автосохранение каждые 30 сек
+    // только если пользователь сейчас вводит данные
     setInterval(() => {
-        if (currentWorkoutData && Object.keys(currentWorkoutData).length > 0) {
+
+        const activeInput = document.activeElement;
+
+        if (
+            activeInput &&
+            activeInput.classList.contains('set-input')
+        ) {
+
             saveCurrentWorkoutInProgress();
         }
+
     }, 30000);
 }
 
@@ -512,6 +539,12 @@ function switchPage(page) {
 
     if (pageElement) {
         pageElement.classList.add('active');
+		
+    }
+	
+	    // Загрузка истории
+    if (page === 'history') {
+        loadHistory();
     }
 }
 
@@ -1074,27 +1107,44 @@ function loadHistory() {
 
     let html = '';
 
-    history.forEach((record, recordIndex) => {
-        const date = new Date(record.date);
-        const dateStr = date.toLocaleDateString('ru-RU', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        });
+history.forEach((record, recordIndex) => {
+    const date = new Date(record.date);
+    const dateStr = date.toLocaleDateString('ru-RU', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
 
         html += `
             <details class="card-modern mb-4">
-                <summary class="cursor-pointer flex justify-between items-center">
-                    <div>
-                        <h3 class="text-lg font-bold" style="background: var(--primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">${dateStr}</h3>
-                        <p class="text-sm opacity-70 mt-1">${record.dayName}</p>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <button onclick="event.stopPropagation(); editHistoryWorkout(${recordIndex})" class="text-xl opacity-70 hover:opacity-100">✏️</button>
-                        <span class="text-xl arrow">▼</span>
-                    </div>
-                </summary>
+<summary class="cursor-pointer flex justify-between items-center">
+    <div>
+        <div class="flex items-center gap-2 mb-1">
+            <span class="chip">
+                ${record.program === 'fullbody' ? '💪 Full Body' : '🍑 Ягодицы'}
+            </span>
+        </div>
+
+        <h3 class="text-lg font-bold">
+            ${record.dayName}
+        </h3>
+
+        <p class="text-sm opacity-70 mt-1">
+            📅 ${record.dateFormatted}
+        </p>
+    </div>
+
+    <div class="flex items-center gap-2">
+        <button
+            onclick="event.stopPropagation(); editHistoryWorkout(${recordIndex})"
+            class="text-xl opacity-70 hover:opacity-100">
+            ✏️
+        </button>
+
+        <span class="text-xl arrow">▼</span>
+    </div>
+</summary>
                 <div class="mt-4 pt-4 border-t border-white border-opacity-10 space-y-3" id="history-${recordIndex}">
         `;
 
