@@ -689,10 +689,10 @@ function loadWorkout(day) {
         html += `
                     </div>
                     <div class="flex gap-2 mt-4">
-                        <button onclick="event.stopPropagation(); event.preventDefault(); addSetToExercise(${index})" class="btn-modern flex-1 text-sm py-3" style="background: var(--primary); color: var(--text-on-accent); border: none;">
+                        <button onclick="event.stopPropagation(); event.preventDefault(); addSetToExercise(${index})" class="add-set-btn flex-1 text-sm py-3">
                             ➕ Добавить подход
                         </button>
-                        <button onclick="event.stopPropagation(); saveCurrentWorkoutInProgress()" class="btn-modern flex-1 text-sm py-3" style="background: var(--primary); color: var(--text-on-accent); border: none;">
+                        <button onclick="event.stopPropagation(); saveCurrentWorkoutInProgress()" class="save-btn flex-1 text-sm py-3">
                             💾 Сохранить
                         </button>
                     </div>
