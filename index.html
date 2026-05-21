@@ -157,32 +157,68 @@
                     ← Назад к выбору программы
                 </button>
 
-                <div class="card-modern mb-4" style="background: var(--card-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);">
-                    <div class="flex items-center justify-between mb-2">
-                        <div>
-                            <div class="text-xs opacity-60 mb-2 font-semibold tracking-wide">ТЕКУЩАЯ ПРОГРАММА</div>
-                            <div class="text-xl font-bold font-display" id="currentProgramName">💪 Full Body</div>
-                        </div>
-                    </div>
-                </div>
+                <div class="card-modern mb-4 workout-header">
 
-                <div class="card-modern mb-4">
-                    <p class="text-sm opacity-70 mb-4 text-center font-semibold">Выбери день тренировки</p>
-                    <div class="grid grid-cols-3 gap-3">
-                        <button onclick="selectDay('A')" class="day-btn text-center font-semibold" data-day="A">
-                            <div class="text-base">День А</div>
-                            <div class="text-xs opacity-70 mt-1">Тяжёлый</div>
-                        </button>
-                        <button onclick="selectDay('B')" class="day-btn text-center font-semibold" data-day="B">
-                            <div class="text-base">День Б</div>
-                            <div class="text-xs opacity-70 mt-1">Объёмный</div>
-                        </button>
-                        <button onclick="selectDay('C')" class="day-btn text-center font-semibold" data-day="C">
-                            <div class="text-base">День В</div>
-                            <div class="text-xs opacity-70 mt-1">Лёгкий</div>
-                        </button>
-                    </div>
-                </div>
+    <!-- Левая часть -->
+
+    <div class="program-side">
+
+        <div class="text-xs opacity-60 mb-2 font-semibold tracking-wide">
+            ТЕКУЩАЯ ПРОГРАММА
+        </div>
+
+        <div class="text-lg font-bold font-display" id="currentProgramName">
+            💪 Full Body
+        </div>
+
+    </div>
+
+    <!-- Divider -->
+
+    <div class="workout-divider-vertical"></div>
+
+    <!-- Правая часть -->
+
+    <div class="days-side">
+
+        <p class="text-sm opacity-70 mb-3 font-semibold">
+            Выбери день тренировки
+        </p>
+
+        <div class="grid grid-cols-3 gap-2">
+
+            <button onclick="selectDay('A')"
+                class="day-btn text-center font-semibold"
+                data-day="A">
+
+                <div class="text-sm">День А</div>
+                <div class="text-xs opacity-70 mt-1">Тяжёлый</div>
+
+            </button>
+
+            <button onclick="selectDay('B')"
+                class="day-btn text-center font-semibold"
+                data-day="B">
+
+                <div class="text-sm">День Б</div>
+                <div class="text-xs opacity-70 mt-1">Объёмный</div>
+
+            </button>
+
+            <button onclick="selectDay('C')"
+                class="day-btn text-center font-semibold"
+                data-day="C">
+
+                <div class="text-sm">День В</div>
+                <div class="text-xs opacity-70 mt-1">Лёгкий</div>
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
 
                 <button onclick="showAddExerciseFromGuideModal()" class="add-exercise-btn w-full mb-4">
                     ➕ Добавить упражнение из справочника

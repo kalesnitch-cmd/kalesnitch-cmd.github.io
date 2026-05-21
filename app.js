@@ -647,7 +647,6 @@ function loadWorkout(day) {
         const lastResult = getLastExerciseResult(exercise);
         const details = `
             <span class="exercise-meta-chip exercise-meta-plan">${escapeHTML(`${exercise.sets} × ${exercise.reps}`)}</span>
-            ${exercise.muscleGroups ? `<span class="exercise-meta-chip exercise-meta-muscles">${escapeHTML(exercise.muscleGroups)}</span>` : ''}
             ${lastResult ? `<span class="exercise-meta-chip exercise-meta-last">Прошлый раз: ${escapeHTML(lastResult)}</span>` : ''}
         `;
 
@@ -659,14 +658,18 @@ function loadWorkout(day) {
                         <p class="exercise-details">${details}</p>
                     </div>
                     <div class="flex items-center gap-2">
-                        <button onclick="event.stopPropagation(); editExercise(${index})" class="icon-btn">✏️</button>
                         <button onclick="event.stopPropagation(); deleteExercise(${index})" class="icon-btn">🗑️</button>
-                        <span class="text-lg arrow opacity-60">▼</span>
+                        <span class="text-lg arrow opacity-60">↴</span>
                     </div>
                 </summary>
 
                 <div class="mt-4 pt-4" style="border-top: 1px solid var(--border-color);">
                     <div class="mb-4">
+					 ${exercise.muscleGroups ? `
+        <div class="text-sm mb-3 opacity-70">
+            🎯 ${exercise.muscleGroups}
+        </div>
+    ` : ''}
                         <p class="text-sm opacity-80 mb-3 leading-relaxed">${exercise.technique}</p>
                         ${exercise.youtubeUrl ? `<a href="${exercise.youtubeUrl}" target="_blank" class="youtube-link">▶️ Смотреть технику</a>` : ''}
                     </div>
@@ -705,7 +708,7 @@ function loadWorkout(day) {
                     </div>
                     <div class="flex gap-2 mt-4">
                         <button onclick="event.stopPropagation(); event.preventDefault(); addSetToExercise(${index})" class="add-set-btn flex-1 text-sm py-3">
-                            ➕ Добавить подход
+                            ➕ Подход
                         </button>
                         <button onclick="event.stopPropagation(); saveCurrentWorkoutInProgress()" class="save-btn flex-1 text-sm py-3">
                             💾 Сохранить

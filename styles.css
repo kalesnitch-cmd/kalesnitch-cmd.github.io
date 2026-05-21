@@ -678,7 +678,7 @@ background:
             rgba(139,92,246,0.88),
             rgba(124,58,237,0.78)
         );
-
+	color: #fff !important;
     box-shadow:
         0 8px 24px rgba(139,92,246,0.16);
 
@@ -687,7 +687,7 @@ background:
 }
 
 .day-btn.active .subtitle {
-    color: rgba(255,255,255,0.72);
+    color: rgba(255,255,255,1.00);
 }
 
 .day-btn:active {
@@ -1127,6 +1127,37 @@ textarea:focus {
     font-weight: 600;
     text-transform: uppercase;
     margin-bottom: 4px;
+}
+
+.workout-header {
+    display: flex;
+    align-items: stretch;
+
+    gap: 18px;
+}
+
+.program-side {
+    width: 180px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.days-side {
+    flex: 1;
+}
+
+.workout-divider-vertical {
+    width: 1px;
+
+    background:
+        linear-gradient(
+            180deg,
+            transparent,
+            rgba(255,255,255,0.08),
+            transparent
+        );
 }
 
 /* Details / Accordion */
