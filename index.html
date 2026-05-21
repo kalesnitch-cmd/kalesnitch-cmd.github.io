@@ -226,7 +226,7 @@
             <div class="p-4">
                 <div class="grid grid-cols-2 gap-4 mb-6">
                     <div class="card-modern text-center">
-                        <div class="text-4xl font-bold font-display mb-2" style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-deep) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;" id="totalWorkouts">0</div>
+                        <div class="text-4xl font-bold font-display mb-2" id="totalWorkouts">0</div>
                         <div class="text-xs opacity-70 mt-2 font-semibold tracking-wide">ВСЕГО ТРЕНИРОВОК</div>
                     </div>
                     <div class="card-modern text-center">
@@ -235,18 +235,29 @@
                     </div>
                 </div>
 
-                <div class="card-modern mb-4">
-                    <p class="text-sm opacity-70 mb-4 text-center font-semibold">Выбери программу</p>
-                    <div class="grid grid-cols-2 gap-3">
-                        <button onclick="switchProgressProgram('fullbody')" class="program-btn day-btn text-center font-semibold" id="progressFullbodyBtn">
-                            <div class="text-base">💪 Full Body</div>
-                            <div class="text-xs opacity-70 mt-1">Жим лёжа</div>
-                        </button>
-                        <button onclick="switchProgressProgram('glutes')" class="program-btn day-btn text-center font-semibold" id="progressGlutesBtn">
-                            <div class="text-base">🍑 Ягодицы</div>
-                            <div class="text-xs opacity-70 mt-1">Ноги и ягодицы</div>
-                        </button>
+                <div class="rm-calculator card-modern mb-6">
+                    <h2 class="text-title">🏋️ Калькулятор жима лёжа</h2>
+                    <div class="rm-grid">
+                        <input
+                            type="number"
+                            id="benchWeight"
+                            class="input-modern"
+                            placeholder="Вес штанги (кг)"
+                            min="1"
+                            inputmode="decimal"
+                        >
+                        <input
+                            type="number"
+                            id="benchReps"
+                            class="input-modern"
+                            placeholder="Повторения"
+                            min="1"
+                            max="30"
+                            inputmode="numeric"
+                        >
                     </div>
+                    <button class="save-btn rm-btn" onclick="calculateBenchRM()">Рассчитать</button>
+                    <div id="rmResult" class="rm-result hidden"></div>
                 </div>
 
                 <div class="card-modern mb-4" id="progressExercisesList"></div>
@@ -506,4 +517,3 @@
     <script src="app.js?v=15"></script>
 </body>
 </html>
-

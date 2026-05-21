@@ -1,4 +1,13 @@
 // Vercel Serverless Function для Groq API
+const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
+const GROQ_MODEL = 'llama-3.3-70b-versatile';
+
+const normalizeText = (value, fallback = '') =>
+    typeof value === 'string' ? value.trim() : fallback;
+
+const normalizeArray = (value) =>
+    Array.isArray(value) ? value.map(item => normalizeText(item)).filter(Boolean) : [];
+
 export default async function handler(req, res) {
     // Разрешаем CORS
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -14,7 +23,24 @@ export default async function handler(req, res) {
     }
 
     try {
-        const { gender, age, weight, height, experience, goal, equipment, preferredExercises, focusAreas } = req.body;
+        if (!process.env.GROQ_API_KEY) {
+            return res.status(500).json({ error: 'Groq API key is not configured' });
+        }
+
+        const body = req.body || {};
+        const gender = normalizeText(body.gender, 'Не указан');
+        const age = Number(body.age);
+        const weight = Number(body.weight);
+        const height = Number(body.height);
+        const experience = normalizeText(body.experience, 'Не указан');
+        const goal = normalizeText(body.goal, 'Не указана');
+        const equipment = normalizeText(body.equipment, 'Не указано');
+        const preferredExercises = normalizeText(body.preferredExercises);
+        const focusAreas = normalizeArray(body.focusAreas);
+
+        if (!Number.isFinite(age) || !Number.isFinite(weight) || !Number.isFinite(height)) {
+            return res.status(400).json({ error: 'Age, weight and height must be numbers' });
+        }
 
         // Формирование текста о приоритетных зонах
         let focusAreasText = '';
@@ -84,14 +110,14 @@ ${randomVariation}
 
 Для каждого дня добавь 4-6 упражнений. Используй разные эмодзи для упражнений (💪, 🦵, 🏋️, 🎯, ⚡, 🔥, 🍑, 🦾).`;
 
-        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        const response = await fetch(GROQ_API_URL, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                model: 'llama-3.3-70b-versatile',
+                model: GROQ_MODEL,
                 messages: [
                     {
                         role: 'system',
@@ -112,7 +138,11 @@ ${randomVariation}
         }
 
         const data = await response.json();
-        const planText = data.choices[0].message.content;
+        const planText = data.choices?.[0]?.message?.content;
+
+        if (!planText) {
+            throw new Error('Groq API returned an empty plan');
+        }
 
         // Попытаться распарсить JSON из ответа
         let plan;
