@@ -157,20 +157,18 @@
                     ← Назад к выбору программы
                 </button>
 
-                <div class="card-modern mb-4 workout-header">
+                <div class="program-day-layout card-modern mb-4">
 
     <!-- Левая часть -->
 
-    <div class="program-side" style="width: 150px;">
-
+   <div class="current-program-block">
         <div class="text-xs opacity-60 mb-2 font-semibold tracking-wide">
             ТЕКУЩАЯ ПРОГРАММА
         </div>
 
-        <div class="text-lg font-bold font-display" id="currentProgramName">
+        <div class="text-xl font-bold font-display" id="currentProgramName">
             💪 Full Body
         </div>
-
     </div>
 
     <!-- Divider -->
@@ -179,20 +177,18 @@
 
     <!-- Правая часть -->
 
-    <div class="days-side">
-
-        <p class="text-sm opacity-70 mb-3 font-semibold">
+   <div class="day-selection-block">
+        <p class="text-sm opacity-70 mb-4 font-semibold">
             Выбери день тренировки
         </p>
 
-        <div class="grid grid-cols-3 gap-2">
+        <div class="day-buttons">
 
             <button onclick="selectDay('A')"
                 class="day-btn text-center font-semibold"
                 data-day="A">
 
-                <div class="text-sm">А</div>
-                <div class="text-xs opacity-70 mt-1">Тяжёлый</div>
+<div class="text-xl font-bold">A</div>
 
             </button>
 
@@ -200,8 +196,7 @@
                 class="day-btn text-center font-semibold"
                 data-day="B">
 
-                <div class="text-sm">Б</div>
-                <div class="text-xs opacity-70 mt-1">Объёмный</div>
+<div class="text-xl font-bold">Б</div>
 
             </button>
 
@@ -209,8 +204,7 @@
                 class="day-btn text-center font-semibold"
                 data-day="C">
 
-                <div class="text-sm">В</div>
-                <div class="text-xs opacity-70 mt-1">Лёгкий</div>
+<div class="text-xl font-bold">В</div>
 
             </button>
 
