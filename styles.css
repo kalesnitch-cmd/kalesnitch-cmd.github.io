@@ -1071,22 +1071,30 @@ textarea:focus {
 /* Keyboard Done Button */
 .keyboard-done-btn {
     position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: var(--accent);
-    color: white;
-    padding: var(--space-20);
-    text-align: center;
+    bottom: 16px;
+    left: 16px;
+
+    padding: 10px 16px;
+
+    border-radius: 14px;
+
+    background: rgba(124, 58, 237, 0.18);
+    border: 1px solid rgba(124, 58, 237, 0.25);
+
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    color: rgba(255,255,255,0.9);
+
+    font-size: 14px;
     font-weight: 600;
-    font-size: 17px;
-    z-index: 999;
-    display: none;
-    box-shadow: var(--shadow-button);
-    cursor: pointer;
-    user-select: none;
-    letter-spacing: -0.01em;
-    border-top: 1px solid var(--border);
+
+    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+
+    z-index: 9999;
+
+    transition: all 0.2s ease;
+	display: none;
 }
 
 .keyboard-done-btn.active {
