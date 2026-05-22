@@ -1,4 +1,12 @@
 // Инициализация Telegram Web App
+window.onerror = function(message, source, line, col, error) {
+    console.log('GLOBAL ERROR:');
+    console.log(message);
+    console.log(source);
+    console.log(line);
+    console.log(error);
+};
+
 let tg = window.Telegram?.WebApp || {
     expand: () => {},
     enableClosingConfirmation: () => {},
@@ -1009,7 +1017,7 @@ function closeAddExerciseFromGuideModal() {
 }
 
 function loadAllExercises() {
-    const container = document.getElementById('exercisesList');
+    const container = document.getElementById('guideExercisesList')
     const categories = {};
 
     allExercises.forEach(exercise => {
@@ -1450,6 +1458,7 @@ totalWorkoutsEl.style.fontWeight = '700';
 }
 
 function renderProgressChart() {
+	
 	const existingChart =
     Chart.getChart('exerciseProgressChart');
 
@@ -1495,16 +1504,27 @@ if (existingChart) {
 
     // Берем только топ-1 упражнение по количеству записей
 
-    const selectedExercise =
-    document.getElementById('chartExerciseSelect')?.value;
+const select =
+    document.getElementById('chartExerciseSelect');
 
-if (!selectedExercise) return;
+let exerciseName;
 
-const records = exerciseData[selectedExercise];
+if (select && select.value) {
+
+    exerciseName = select.value;
+
+} else {
+
+    // если select нет — берем первое упражнение
+    exerciseName = Object.keys(exerciseData)[0];
+	if (!exerciseName) return;
+
+}
+
+const records = exerciseData[exerciseName];
+if (!records) return;
 
 if (!records || records.length === 0) return;
-
-const exerciseName = selectedExercise;
 
     records.sort((a, b) => a.date - b.date);
 
@@ -1517,9 +1537,12 @@ const exerciseName = selectedExercise;
 
     const data = records.map(r => r.weight);
 
-    const ctx = document
-        .getElementById('exerciseProgressChart')
-        .getContext('2d');
+    const canvas =
+    document.getElementById('exerciseProgressChart');
+
+if (!canvas) return;
+
+const ctx = canvas.getContext('2d');
 
     new Chart(ctx, {
 
@@ -1584,6 +1607,7 @@ const exerciseName = selectedExercise;
             }
         }
     });
+	
 }
 
 function loadProgressExercises() {
@@ -1749,13 +1773,13 @@ renderProgressChart();
 
 function loadChartExerciseSelector() {
 
-    const history =
-        JSON.parse(localStorage.getItem('workoutHistory') || '[]');
-
     const select =
         document.getElementById('chartExerciseSelect');
 
     if (!select) return;
+
+    const history =
+        JSON.parse(localStorage.getItem('workoutHistory') || '[]');
 
     const exercises = new Set();
 
