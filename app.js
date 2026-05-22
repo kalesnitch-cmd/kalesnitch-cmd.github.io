@@ -1472,7 +1472,9 @@ if (existingChart) {
 
     history.forEach(record => {
 
-        for (let exerciseId in record.exercises) {
+    if (!record.exercises) return;
+
+    for (let exerciseId in record.exercises) {
 
             const exercise = record.exercises[exerciseId];
 
@@ -1632,7 +1634,9 @@ function loadProgressExercises() {
 
     history.forEach(record => {
 
-        for (let exerciseId in record.exercises) {
+    if (!record.exercises) return;
+
+    for (let exerciseId in record.exercises) {
 
             const exercise = record.exercises[exerciseId];
 
