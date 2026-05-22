@@ -1446,130 +1446,341 @@ totalWorkoutsEl.style.fontWeight = '700';
 
     // ЗАГРУЗКА ВСЕХ РЕКОРДОВ
     loadProgressExercises();
+	
 }
 
-// Загрузка личных рекордов
-function loadProgressExercises() {
-    const history = readStorageJSON('workoutHistory', []);
-    const container = document.getElementById('progressExercisesList');
+function renderProgressChart() {
+	const existingChart =
+    Chart.getChart('exerciseProgressChart');
 
-    if (history.length === 0) {
-        container.innerHTML = `
-            <div class="text-center py-8 opacity-50">
-                <div class="text-3xl mb-2">📊</div>
-                <p>Нет данных тренировок</p>
-            </div>
-        `;
-        return;
-    }
+if (existingChart) {
+    existingChart.destroy();
+}
 
-    // Максимальные веса
-    const exerciseRecords = {};
+    const history = JSON.parse(localStorage.getItem('workoutHistory') || '[]');
+
+    const exerciseData = {};
 
     history.forEach(record => {
+
         for (let exerciseId in record.exercises) {
+
             const exercise = record.exercises[exerciseId];
 
-            if (!exercise.sets) continue;
+            if (!exercise?.sets) continue;
 
-            const maxWeight = Math.max(
-                ...exercise.sets.map(set => parseFloat(set.weight) || 0)
+            const validSets = exercise.sets.filter(
+                set => set && set.weight && parseFloat(set.weight) > 0
             );
 
-            if (maxWeight <= 0) continue;
+            if (validSets.length === 0) continue;
 
-            // Сохраняем только лучший результат
-            if (
-                !exerciseRecords[exercise.name] ||
-                maxWeight > exerciseRecords[exercise.name].weight
-            ) {
-                exerciseRecords[exercise.name] = {
-                    name: exercise.name,
-                    weight: maxWeight
-                };
+            const maxWeight = Math.max(
+                ...validSets.map(set => parseFloat(set.weight))
+            );
+
+            const name = exercise.name;
+
+            if (!exerciseData[name]) {
+                exerciseData[name] = [];
+            }
+
+            exerciseData[name].push({
+                date: new Date(record.date),
+                weight: maxWeight
+            });
+        }
+
+    });
+
+    // Берем только топ-1 упражнение по количеству записей
+
+    const selectedExercise =
+    document.getElementById('chartExerciseSelect')?.value;
+
+if (!selectedExercise) return;
+
+const records = exerciseData[selectedExercise];
+
+if (!records || records.length === 0) return;
+
+const exerciseName = selectedExercise;
+
+    records.sort((a, b) => a.date - b.date);
+
+    const labels = records.map(r =>
+        r.date.toLocaleDateString('ru-RU', {
+            day: '2-digit',
+            month: '2-digit'
+        })
+    );
+
+    const data = records.map(r => r.weight);
+
+    const ctx = document
+        .getElementById('exerciseProgressChart')
+        .getContext('2d');
+
+    new Chart(ctx, {
+
+        type: 'line',
+
+        data: {
+
+            labels,
+
+            datasets: [{
+                label: exerciseName,
+                data,
+
+                borderColor: '#8b5cf6',
+
+                backgroundColor: 'rgba(139,92,246,0.15)',
+
+                tension: 0.35,
+
+                fill: true,
+
+                pointRadius: 4,
+
+                pointHoverRadius: 6
+            }]
+        },
+
+        options: {
+
+            responsive: true,
+
+            plugins: {
+
+                legend: {
+                    display: false
+                }
+            },
+
+            scales: {
+
+                x: {
+
+                    ticks: {
+                        color: 'rgba(255,255,255,0.5)'
+                    },
+
+                    grid: {
+                        display: false
+                    }
+                },
+
+                y: {
+
+                    ticks: {
+                        color: 'rgba(255,255,255,0.5)'
+                    },
+
+                    grid: {
+                        color: 'rgba(255,255,255,0.05)'
+                    }
+                }
             }
         }
     });
+}
 
-    // Разделение верх / низ
-    const upperBody = [];
-    const lowerBody = [];
+function loadProgressExercises() {
 
-    Object.values(exerciseRecords).forEach(exercise => {
-        const lowerKeywords = [
-            'ног',
-            'ягод',
-            'икр',
-            'присед',
-            'выпад',
-            'румын',
-            'станов'
-        ];
+    const history = JSON.parse(localStorage.getItem('workoutHistory') || '[]');
 
-        const exerciseName = exercise.name || 'Без названия';
+    const container = document.getElementById('progressExercisesList');
 
-const isLower = lowerKeywords.some(keyword =>
-    exerciseName.toLowerCase().includes(keyword)
-);
+    if (history.length === 0) {
 
-        if (isLower) {
-            lowerBody.push(exercise);
-        } else {
-            upperBody.push(exercise);
-        }
-    });
-
-    // Сортировка по весу
-    upperBody.sort((a, b) => b.weight - a.weight);
-    lowerBody.sort((a, b) => b.weight - a.weight);
-
-    function renderSection(title, exercises) {
-        if (exercises.length === 0) return '';
-
-        return `
-            <div class="mb-6">
-                <h3 class="text-lg font-bold mb-3">
-                    ${title}
-                </h3>
-
-                <div class="space-y-3">
-                    ${exercises.map(exercise => `
-                        <div class="bg-white bg-opacity-5 rounded-2xl p-4 flex justify-between items-center border border-white border-opacity-5">
-
-                            <div>
-                                <div class="font-semibold text-white">
-                                    ${exercise.name}
-                                </div>
-
-                                <div class="text-sm opacity-60 mt-1">
-                                    Максимальный вес
-                                </div>
-                            </div>
-
-                            <div class="text-2xl font-bold text-white">
-                                ${exercise.weight} кг
-                            </div>
-
-                        </div>
-                    `).join('')}
-                </div>
+        container.innerHTML = `
+            <div class="text-center py-8 opacity-50">
+                <div class="text-3xl mb-2">📈</div>
+                <p>Нет данных прогресса</p>
             </div>
         `;
+
+        return;
     }
 
-    container.innerHTML = `
-        <div class="card-modern p-5">
+    const exerciseStats = {};
 
-            <h2 class="text-xl font-bold mb-5">
-                🏆 Личные рекорды
-            </h2>
+    history.forEach(record => {
 
-            ${renderSection('💪 Верх тела', upperBody)}
+        for (let exerciseId in record.exercises) {
 
-            ${renderSection('🦵 Низ тела', lowerBody)}
+            const exercise = record.exercises[exerciseId];
 
-        </div>
+            if (!exercise || !exercise.sets) continue;
+
+            const validSets = exercise.sets.filter(
+                set => set && set.weight && parseFloat(set.weight) > 0
+            );
+
+            if (validSets.length === 0) continue;
+
+            const maxWeight = Math.max(
+                ...validSets.map(set => parseFloat(set.weight) || 0)
+            );
+
+            const exerciseName = exercise.name;
+
+            if (!exerciseStats[exerciseName]) {
+
+                exerciseStats[exerciseName] = {
+                    name: exerciseName,
+                    records: [],
+                    max: 0
+                };
+
+            }
+
+            exerciseStats[exerciseName].records.push({
+                date: record.date,
+                weight: maxWeight
+            });
+
+            if (maxWeight > exerciseStats[exerciseName].max) {
+                exerciseStats[exerciseName].max = maxWeight;
+            }
+
+        }
+
+    });
+
+    if (Object.keys(exerciseStats).length === 0) {
+
+        container.innerHTML = `
+            <div class="text-center py-8 opacity-50">
+                <div class="text-3xl mb-2">📈</div>
+                <p>Нет данных прогресса</p>
+            </div>
+        `;
+
+        return;
+    }
+
+    const sortedExercises = Object.values(exerciseStats)
+        .sort((a, b) => b.max - a.max);
+
+    let html = `
+        <h3 class="text-lg font-bold mb-3">
+            📈 Прогресс упражнений
+        </h3>
     `;
+
+    sortedExercises.forEach(exercise => {
+
+        const records = exercise.records.sort(
+            (a, b) => new Date(a.date) - new Date(b.date)
+        );
+
+        const lastWeight =
+            records[records.length - 1]?.weight || 0;
+
+        const previousWeight =
+            records.length > 1
+                ? records[records.length - 2].weight
+                : lastWeight;
+
+        const firstWeight =
+            records[0]?.weight || 0;
+
+        const progress =
+            lastWeight - firstWeight;
+
+        const firstDate = new Date(records[0]?.date);
+
+        const firstDateFormatted =
+            firstDate.toLocaleDateString('ru-RU', {
+                day: '2-digit',
+                month: '2-digit'
+            });
+
+        html += `
+            <div class="progress-card mb-2">
+
+                <div class="progress-top-line">
+
+                    <span class="progress-exercise">
+                        ${exercise.name}
+                    </span>
+
+                    <span class="progress-records">
+                        записей: ${records.length}
+                    </span>
+
+                </div>
+
+                <div class="progress-bottom-line">
+
+                    <span class="progress-current">
+                        Рекорд ${exercise.max} кг
+                    </span>
+
+                    <span class="progress-prev">
+                        Прошлый ${previousWeight} кг
+                    </span>
+
+                    <span class="
+                        ${progress > 0 ? 'progress-positive' : ''}
+                        ${progress < 0 ? 'progress-negative' : ''}
+                    ">
+                        ${progress > 0 ? '+' : ''}${progress} кг
+                    </span>
+
+                    <span class="progress-date">
+                        с ${firstDateFormatted}
+                    </span>
+
+                </div>
+
+            </div>
+        `;
+    });
+
+    container.innerHTML = html;
+
+loadChartExerciseSelector();
+
+renderProgressChart();
+}
+
+function loadChartExerciseSelector() {
+
+    const history =
+        JSON.parse(localStorage.getItem('workoutHistory') || '[]');
+
+    const select =
+        document.getElementById('chartExerciseSelect');
+
+    if (!select) return;
+
+    const exercises = new Set();
+
+    history.forEach(record => {
+
+        for (let exerciseId in record.exercises) {
+
+            const exercise = record.exercises[exerciseId];
+
+            if (exercise?.name) {
+                exercises.add(exercise.name);
+            }
+
+        }
+
+    });
+
+    const sortedExercises =
+        Array.from(exercises).sort();
+
+    select.innerHTML = sortedExercises.map(name => `
+        <option value="${name}">
+            ${name}
+        </option>
+    `).join('');
 }
 
 // ============================================

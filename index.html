@@ -298,7 +298,19 @@ git push origin main -->
                 </div>
 
                 <div class="card-modern mb-4" id="progressExercisesList"></div>
-            </div>
+
+<div class="card-modern mb-4">
+
+    <div class="mb-4">
+        <select id="chartExerciseSelect"
+                class="input-modern w-full"
+                onchange="renderProgressChart()">
+        </select>
+    </div>
+
+    <canvas id="exerciseProgressChart"></canvas>
+
+</div>
         </div>
 
         <!-- Страница гайдов -->
@@ -551,6 +563,8 @@ git push origin main -->
     </div>
 
     <script src="data.js?v=15"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="app.js?v=15"></script>
+	
 </body>
 </html>
